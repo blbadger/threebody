@@ -69,7 +69,7 @@ v2 = np.array([[0.,0.,0.] for j in range(steps)])
 p3 = np.array([[0.,0.,0.] for k in range(steps)])
 v3 = np.array([[0.,0.,0.] for k in range(steps)])
 
-
+# second trajectory start, for comparison to (p1, p2, p3)
 p1_prime = np.array([[0.,0.,0.] for i in range(steps)])
 v1_prime = np.array([[0.,0.,0.] for i in range(steps)])
 
@@ -79,7 +79,7 @@ v2_prime = np.array([[0.,0.,0.] for j in range(steps)])
 p3_prime = np.array([[0.,0.,0.] for k in range(steps)])
 v3_prime = np.array([[0.,0.,0.] for k in range(steps)])
 
-# starting point
+# starting points
 p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
 
 v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
@@ -94,7 +94,7 @@ time = [0]
 for i in range(steps-1):
 	# time.append(i)
 
-	#calculate derivatives
+	# calculate derivatives
 	dv1, dv2, dv3 = accelerations(p1[i], p2[i], p3[i])
 	dv1_prime, dv2_prime, dv3_prime = accelerations(p1_prime[i], p2_prime[i], p3_prime[i])
 
@@ -106,6 +106,7 @@ for i in range(steps-1):
 	p2[i + 1] = p2[i] + v2[i] * delta_t
 	p3[i + 1] = p3[i] + v3[i] * delta_t
 
+	# alternate trajectory (primes are not derivatives)
 	v1_prime[i + 1] = v1_prime[i] + dv1_prime * delta_t
 	v2_prime[i + 1] = v2_prime[i] + dv2_prime * delta_t
 	v3_prime[i + 1] = v3_prime[i] + dv3_prime * delta_t
