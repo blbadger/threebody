@@ -164,7 +164,7 @@ class Threebody:
 		return time_array
 
 
-t = Threebody(1000)
+t = Threebody(2000)
 time_array = t.sensitivity(100, 100, 100)
 plt.style.use('dark_background')
 plt.imshow(time_array, cmap='inferno')
