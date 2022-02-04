@@ -9,6 +9,9 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from mpl_toolkits.mplot3d import Axes3D
+import numexpr as ne 
+import time
+
 plt.style.use('dark_background')
 
 
@@ -53,6 +56,35 @@ class Threebody:
 
 		return planet_1_dv, planet_2_dv, planet_3_dv
 
+	def optimized_accelerations(self, p1, p2, p3):
+		"""
+		A function to calculate the derivatives of x, y, and z
+		given 3 object and their locations according to Newton's laws
+
+		Args:
+			p1: np.ndarray(np.meshgrid[float]) or float
+			p2: np.ndarray(np.meshgrid[float]) or float
+			p3: np.ndarray(np.meshgrid[float]) or float
+
+		Return:
+			planet_1_dv: np.ndarray(np.meshgrid[float]) or float
+			planet_2_dv: np.ndarray(np.meshgrid[float]) or float
+			planet_3_dv: np.ndarray(np.meshgrid[float]) or float
+
+		"""
+
+		m_1, m_2, m_3 = self.m1, self.m2, self.m3
+		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
+					   9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
+
+		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
+					   9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
+
+		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
+					   9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
+
+		return planet_1_dv, planet_2_dv, planet_3_dv
+
 
 	def not_diverged(self, p1, p1_prime):
 		"""
@@ -66,7 +98,7 @@ class Threebody:
 			bool_arr: np.ndarray[bool]
 
 		"""
-		separation_arr = np.sqrt(np.sum([i**2 for i in p1 - p1_prime]))
+		separation_arr = np.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
 		bool_arr = separation_arr <= self.distance
 		return bool_arr
 
@@ -85,7 +117,7 @@ class Threebody:
 		"""
 
 		delta_t = self.delta_t
-		y, x = np.arange(10, 30, 20/y_res), np.arange(-10, 10, 20/x_res)
+		y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
 		grid = np.meshgrid(x, y)
 		grid2 = np.meshgrid(x, y)
 		# grid of all -11, identical starting z-values
@@ -126,17 +158,15 @@ class Threebody:
 
 		# bool array of all True
 		still_together = grid[0] < 1e10
-		trajectory_arr = []
-		print (p1, p2)
-		print ([i**2 for i in p1 - p2])
-		print ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)
+		t = time.time()
+
 
 		# evolution of the system
 		for i in range(self.time_steps):
-			if i % 1000 == 0:
+			if i % 100 == 0:
 				print (i)
+				print (time.time() - t)
 
-			trajectory_arr.append([p1[0][0][0], p1[1][0][0], p1[2][0][0]])
 			not_diverged = self.not_diverged(p1, p1_prime)
 
 			# points still together are not diverging now and have not previously
@@ -167,11 +197,6 @@ class Threebody:
 			p3_prime = p3_prime + v3_prime * delta_t
 			v1_prime, v2_prime, v3_prime = nv1_prime, nv2_prime, nv3_prime
 
-		print (trajectory_arr)
-		plt.plot([i[0] for i in trajectory_arr], [j[1] for j in trajectory_arr], [k[2] for k in trajectory_arr] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.show()
-		plt.close()
-		print (p1 - p1_prime)
 		return time_array
 
 	def three_body_trajectory(self):
@@ -326,14 +351,15 @@ class Threebody:
 		plt.show()
 		plt.close()
 
-
-t = Threebody(50000)
-t.three_body_trajectory()
-time_array = t.sensitivity(100, 100, 100)
+time_steps = 50000
+t = Threebody(time_steps)
+# t.three_body_trajectory()
+time_array = t.sensitivity(500, 500, 500)
+time_array = time_steps - time_array 
 plt.style.use('dark_background')
 plt.imshow(time_array, cmap='inferno')
 plt.axis('off')
-plt.savefig('Threebody_divergence{0:04d}.png'.format(1), bbox_inches='tight', pad_inches=0, dpi=410)
+plt.savefig('Threebody_divergence{0:04d}.png'.format(2), bbox_inches='tight', pad_inches=0, dpi=410)
 plt.show()
 plt.close()
 
