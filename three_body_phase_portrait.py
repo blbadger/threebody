@@ -11,8 +11,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numexpr as ne 
 import time
-
-plt.style.use('dark_background')
+import torch
 
 
 class Threebody:
@@ -28,35 +27,6 @@ class Threebody:
 		self.delta_t = 0.001
 
 	def accelerations(self, p1, p2, p3):
-		"""
-		A function to calculate the derivatives of x, y, and z
-		given 3 object and their locations according to Newton's laws
-
-		Args:
-			p1: np.ndarray(np.meshgrid[float]) or float
-			p2: np.ndarray(np.meshgrid[float]) or float
-			p3: np.ndarray(np.meshgrid[float]) or float
-
-		Return:
-			planet_1_dv: np.ndarray(np.meshgrid[float]) or float
-			planet_2_dv: np.ndarray(np.meshgrid[float]) or float
-			planet_3_dv: np.ndarray(np.meshgrid[float]) or float
-
-		"""
-
-		m_1, m_2, m_3 = self.m1, self.m2, self.m3
-		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
-					   9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
-
-		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
-					   9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
-
-		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
-					   9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
-
-		return planet_1_dv, planet_2_dv, planet_3_dv
-
-	def optimized_accelerations(self, p1, p2, p3):
 		"""
 		A function to calculate the derivatives of x, y, and z
 		given 3 object and their locations according to Newton's laws
@@ -103,7 +73,7 @@ class Threebody:
 		return bool_arr
 
 
-	def sensitivity(self, y_res, x_res, steps):
+	def sensitivity(self, y_res, x_res):
 		"""
 		Plots the sensitivity to initial values per starting point of planet 1, as
 		measured by the time until divergence.
@@ -117,22 +87,23 @@ class Threebody:
 		"""
 
 		delta_t = self.delta_t
-		y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
-		grid = np.meshgrid(x, y)
-		grid2 = np.meshgrid(x, y)
+		y, z = np.arange(-20, 20, 40/y_res), np.arange(-30, 30, 60/x_res)
+		grid = np.meshgrid(z, y)
+		grid2 = np.meshgrid(z, y)
+
 		# grid of all -11, identical starting z-values
-		z = np.zeros(grid[0].shape) - 11
+		x = np.zeros(grid[0].shape) - 10
 
 		# shift the grid by a small amount
 		grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
 		# grid of all -11, identical starting z-values
-		z_prime = np.zeros(grid[0].shape) - 11 + 1e-3
+		x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
 
 		time_array = np.zeros(grid[0].shape)
 
 		# starting coordinates for planets
 		# p1_start = x_1, y_1, z_1
-		p1 = np.array([grid[0], grid[1], z])
+		p1 = np.array([x, grid[0], grid[1]])
 		v1 = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		# p2_start = x_2, y_2, z_2
@@ -145,7 +116,7 @@ class Threebody:
 
 		# starting coordinates for planets shifted
 		# p1_start = x_1, y_1, z_1
-		p1_prime = np.array([grid2[0], grid2[1], z_prime])
+		p1_prime = np.array([x_prime, grid2[0], grid2[1]])
 		v1_prime = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		# p2_start = x_2, y_2, z_2
@@ -159,15 +130,28 @@ class Threebody:
 		# bool array of all True
 		still_together = grid[0] < 1e10
 		t = time.time()
+		p1, p2, p3 = torch.Tensor(p1), torch.Tensor(p2), torch.Tensor(p3)
+		v1, v2, v3 = torch.Tensor(v1), torch.Tensor(v2), torch.Tensor(v3)
+		p1, p2, p3 = p1.type(torch.double), p2.type(torch.double), p3.type(torch.double)
+		v1, v2, v3 = v1.type(torch.double), v2.type(torch.double), v3.type(torch.double)
 
+		p1_prime, p2_prime, p3_prime = torch.Tensor(p1_prime), torch.Tensor(p2_prime), torch.Tensor(p3_prime)
+		v1_prime, v2_prime, v3_prime = torch.Tensor(v1_prime), torch.Tensor(v2_prime), torch.Tensor(v3_prime)
 
 		# evolution of the system
 		for i in range(self.time_steps):
 			if i % 100 == 0:
 				print (i)
-				print (time.time() - t)
+				print (f'Elapsed time: {time.time() - t} seconds')
+				time_array2 = i - time_array 
+				plt.style.use('dark_background')
+				plt.imshow(time_array2, cmap='inferno')
+				plt.axis('off')
+				plt.savefig('Threebody_divergence{0:04d}.png'.format(i//100), bbox_inches='tight', pad_inches=0, dpi=420)
+				plt.close()
 
 			not_diverged = self.not_diverged(p1, p1_prime)
+			not_diverged = not_diverged.numpy()
 
 			# points still together are not diverging now and have not previously
 			still_together &= not_diverged
@@ -199,9 +183,9 @@ class Threebody:
 
 		return time_array
 
-	def three_body_trajectory(self):
+	def three_body_phase(self):
 		"""
-		Plot the trajectory of three bodies according to Newtonian mechanics
+		Plot the phase of three bodies according to Newtonian mechanics
 
 		Args:
 			None
@@ -276,8 +260,8 @@ class Threebody:
 		for i in range(steps-1):
 			time.append(i)
 			#calculate derivatives
-			dv1, dv2, dv3 = self.accelerations(p1[i], p2[i], p3[i])
-			dv1_prime, dv2_prime, dv3_prime = self.accelerations(p1_prime[i], p2_prime[i], p3_prime[i])
+			dv1, dv2, dv3 = self.optimized_accelerations(p1[i], p2[i], p3[i])
+			dv1_prime, dv2_prime, dv3_prime = self.optimized_accelerations(p1_prime[i], p2_prime[i], p3_prime[i])
 
 			v1[i + 1] = v1[i] + dv1 * delta_t
 			v2[i + 1] = v2[i] + dv2 * delta_t
@@ -354,14 +338,14 @@ class Threebody:
 time_steps = 50000
 t = Threebody(time_steps)
 # t.three_body_trajectory()
-time_array = t.sensitivity(500, 500, 500)
-time_array = time_steps - time_array 
-plt.style.use('dark_background')
-plt.imshow(time_array, cmap='inferno')
-plt.axis('off')
-plt.savefig('Threebody_divergence{0:04d}.png'.format(2), bbox_inches='tight', pad_inches=0, dpi=410)
-plt.show()
-plt.close()
+time_array = t.sensitivity(1000, 1500)
+# time_array = time_steps - time_array 
+# plt.style.use('dark_background')
+# plt.imshow(time_array, cmap='inferno')
+# plt.axis('off')
+# plt.savefig('Threebody_divergence{0:04d}.png'.format(3), bbox_inches='tight', pad_inches=0, dpi=410)
+# plt.show()
+# plt.close()
 
 
 
