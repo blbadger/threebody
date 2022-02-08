@@ -4,3 +4,5 @@ Programs to simulate the trajectory of three astronomical bodies through space, 
 in the general case for two but not three or more bodies.
 
 ![3body](https://blbadger.github.io/3_body_problem/3_body_shifted_1.png)
+
+![divergence](https://blbadger.github.io/3_body_problem/Threebody_divergence_xy.png)
