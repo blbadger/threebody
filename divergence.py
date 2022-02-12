@@ -113,17 +113,17 @@ class Threebody:
 
 		"""
 
-		y, z = np.arange(-20, 20, 40/self.y_res), np.arange(-30, 30, 60/self.x_res)
-		grid = np.meshgrid(z, y)
-		grid2 = np.meshgrid(z, y)
+		z, y = np.arange(20, -20, -40/self.y_res), np.arange(-30, 30, 60/self.x_res)
+		grid = np.meshgrid(y, z)
+		grid2 = np.meshgrid(y, z)
 
-		# grid of all -11, identical starting z-values
+		# grid of all -10, identical starting x-values
 		x = np.zeros(grid[0].shape) - 10
 
 		# shift the grid by a small amount
 		grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
 
-		# grid of all -11, identical starting z-values
+		# grid of all -10, identical starting x-values
 		x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
 
 		# starting coordinates for planets
