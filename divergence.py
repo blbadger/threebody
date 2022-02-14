@@ -84,7 +84,7 @@ class Threebody:
 	def plot_divergence(self, divergence_array):
 		"""
 		Generates a plot of a divergence array
-
+		
 		Args:
 			divergence_array: np.ndarray[float]
 
@@ -100,6 +100,27 @@ class Threebody:
 		plt.close()
 		return
 
+	def plot_projection(self, divergence_array, i):
+		"""
+		Generates a plot of a divergence array with the projection of a slope z = 12/10 * y
+
+		Args:
+			divergence_array: np.ndarray[float]
+
+		Returns:
+			None (saves pyplot.imshow() image)
+
+		"""
+		plt.rcParams.update({'font.size': 7})
+		divergence_array[(self.p1[1] * 12 - self.p1[2] * 10 < 1).numpy() & (self.p1[1] * 12 - self.p1[2] * 10 > -1).numpy()] = i
+		plt.style.use('dark_background')
+		plt.imshow(divergence_array, cmap='inferno', extent=[-20, 20, -20, 20])
+		plt.axis('on')
+		plt.xlabel('y axis', fontsize=7)
+		plt.ylabel('z axis', fontsize=7)
+		plt.savefig('Threebody_divergence{0:04d}.png'.format(i//100), bbox_inches='tight', dpi=420)
+		plt.close()
+		return
 
 	def initialize_arrays(self, double_type=True):
 		"""
@@ -113,7 +134,7 @@ class Threebody:
 
 		"""
 
-		z, y = np.arange(20, -20, -40/self.y_res), np.arange(-30, 30, 60/self.x_res)
+		z, y = np.arange(20, -20, -40/self.y_res), np.arange(-20, 20, 40/self.x_res)
 		grid = np.meshgrid(y, z)
 		grid2 = np.meshgrid(y, z)
 
@@ -188,12 +209,12 @@ class Threebody:
 		t = time.time()
 		# evolution of the system
 		for i in range(self.time_steps):
-			if i % 100 == 0:
+			if i % 1000 == 0:
 				print (i)
 				print (f'Elapsed time: {time.time() - t} seconds')
 				time_array2 = i - time_array 
 				if iterations_video:
-					self.plot_divergence(time_array2)
+					self.plot_projection(time_array2, i)
 
 			not_diverged = self.not_diverged(self.p1, self.p1_prime)
 			not_diverged = not_diverged.numpy()
@@ -380,9 +401,9 @@ class Threebody:
 
 
 time_steps = 50000
-x_res, y_res = 75, 50
+x_res, y_res = 1000, 1000
 t = Threebody(time_steps, x_res, y_res)
-time_array = t.sensitivity()
+time_array = t.sensitivity(iterations_video=True)
 # t.three_body_trajectory()
 time_array = time_steps - time_array 
 plt.style.use('dark_background')
