@@ -13,9 +13,12 @@ import numexpr as ne
 import time
 import torch
 
+device = 'cuda' if torch.cuda.is_available else 'cpu'
+print (f'Device: {device}')
+
 class Threebody:
 
-	def __init__(self, time_steps, x_res, y_res):
+	def __init__(self, time_steps, x_res, y_res, z_offset):
 		self.x_res = x_res
 		self.y_res = y_res
 		self.distance = 0.5
@@ -23,10 +26,12 @@ class Threebody:
 		self.m2 = 20
 		self.m3 = 30
 		self.time_steps = time_steps
-		self.p1, self.p2, self.p3 = np.ndarray([]), np.ndarray([]), np.ndarray([])
-		self.v1, self.v2, self.v3 = np.ndarray([]), np.ndarray([]), np.ndarray([])
-		self.p1_prime, self.p2_prime, self.p3_prime = np.ndarray([]), np.ndarray([]), np.ndarray([])
-		self.v1_prime, self.v2_prime, self.v3_prime = np.ndarray([]), np.ndarray([]), np.ndarray([])
+		self.p1, self.p2, self.p3 = (torch.tensor([]) for i in range(3))
+		self.v1, self.v2, self.v3 = (torch.tensor([]) for i in range(3))
+		self.p1_prime, self.p2_prime, self.p3_prime = (torch.tensor([]) for i in range(3))
+		self.v1_prime, self.v2_prime, self.v3_prime = (torch.tensor([]) for i in range(3))
+
+		self.z_offset = z_offset
 
 		# assign a small number to each time step
 		self.delta_t = 0.001
@@ -50,14 +55,14 @@ class Threebody:
 		"""
 
 		m_1, m_2, m_3 = self.m1, self.m2, self.m3
-		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
-					   9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
+		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(torch.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
+					   9.8 * m_3 * (p1 - p3)/(torch.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
 
-		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
-					   9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
+		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(torch.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
+					   9.8 * m_1 * (p2 - p1)/(torch.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
 
-		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
-					   9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
+		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(torch.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
+					   9.8 * m_2 * (p3 - p2)/(torch.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
 
 		return planet_1_dv, planet_2_dv, planet_3_dv
 
@@ -75,7 +80,7 @@ class Threebody:
 
 		"""
 
-		separation_arr = np.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
+		separation_arr = torch.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
 		bool_arr = separation_arr <= self.distance
 
 		return bool_arr
@@ -133,22 +138,38 @@ class Threebody:
 			None
 
 		"""
+		y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
+		grid = np.meshgrid(x, y)
+		grid2 = np.meshgrid(x, y)
 
-		z, y = np.arange(20, -20, -40/self.y_res), np.arange(-20, 20, 40/self.x_res)
-		grid = np.meshgrid(y, z)
-		grid2 = np.meshgrid(y, z)
-
-		# grid of all -10, identical starting x-values
-		x = np.zeros(grid[0].shape) - 10
+		# grid of all -11, identical starting z-values
+		z_offset = self.z_offset
+		z = np.zeros(grid[0].shape) + z_offset # - 11
 
 		# shift the grid by a small amount
 		grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
+		# grid of all -11, identical starting z-values
+		z_prime = np.zeros(grid[0].shape) - 11 + 1e-3
 
-		# grid of all -10, identical starting x-values
-		x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
+		# p1_start = x_1, y_1, z_1
+		p1 = np.array([grid[0], grid[1], z])
+		p1_prime = np.array([grid2[0], grid2[1], z_prime])
+
+		# z, y = np.arange(20, -20, -40/self.y_res), np.arange(-20, 20, 40/self.x_res)
+		# grid = np.meshgrid(y, z)
+		# grid2 = np.meshgrid(y, z)
+
+		# # grid of all -10, identical starting x-values
+		# x = np.zeros(grid[0].shape) - 10
+
+		# # shift the grid by a small amount
+		# grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
+
+		# # grid of all -10, identical starting x-values
+		# x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
 
 		# starting coordinates for planets
-		p1 = np.array([x, grid[0], grid[1]])
+		# p1 = np.array([x, grid[0], grid[1]])
 		v1 = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
@@ -158,7 +179,7 @@ class Threebody:
 		v3 = np.array([np.ones(grid[0].shape) * 3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		# starting coordinates for planets shifted
-		p1_prime = np.array([x_prime, grid2[0], grid2[1]])
+		# p1_prime = np.array([x_prime, grid2[0], grid2[1]])
 		v1_prime = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		p2_prime = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
@@ -178,10 +199,10 @@ class Threebody:
 		else:
 			ttype = torch.float
 
-		self.p1, self.p2, self.p3 = p1.type(ttype), p2.type(ttype), p3.type(ttype)
-		self.v1, self.v2, self.v3 = v1.type(ttype), v2.type(ttype), v3.type(ttype)
-		self.p1_prime, self.p2_prime, self.p3_prime = p1_prime.type(ttype), p2_prime.type(ttype), p3_prime.type(ttype)
-		self.v1_prime, self.v2_prime, self.v3_prime = v1_prime.type(ttype), v2_prime.type(ttype), v3_prime.type(ttype)
+		self.p1, self.p2, self.p3 = p1.type(ttype).to(device), p2.type(ttype).to(device), p3.type(ttype).to(device)
+		self.v1, self.v2, self.v3 = v1.type(ttype).to(device), v2.type(ttype).to(device), v3.type(ttype).to(device)
+		self.p1_prime, self.p2_prime, self.p3_prime = p1_prime.type(ttype).to(device), p2_prime.type(ttype).to(device), p3_prime.type(ttype).to(device)
+		self.v1_prime, self.v2_prime, self.v3_prime = v1_prime.type(ttype).to(device), v2_prime.type(ttype).to(device), v3_prime.type(ttype).to(device)
 
 		return
 
@@ -201,7 +222,7 @@ class Threebody:
 
 		delta_t = self.delta_t
 		self.initialize_arrays(double_type=True)
-		time_array = np.zeros(self.p1[0].shape)
+		time_array = torch.zeros(self.p1[0].shape).to(device)
 
 		# bool array of all True
 		still_together = time_array < 1e10
@@ -210,14 +231,14 @@ class Threebody:
 		# evolution of the system
 		for i in range(self.time_steps):
 			if i % 1000 == 0:
-				print (i)
-				print (f'Elapsed time: {time.time() - t} seconds')
+				print (f'Iteration: {i}')
+				print (f'Comleted in: {round(time.time() - t, 2)} seconds')
+				t = time.time()
 				time_array2 = i - time_array 
 				if iterations_video:
 					self.plot_projection(time_array2, i)
 
 			not_diverged = self.not_diverged(self.p1, self.p1_prime)
-			not_diverged = not_diverged.numpy()
 
 			# points still together are not diverging now and have not previously
 			still_together &= not_diverged
@@ -400,18 +421,22 @@ class Threebody:
 
 
 
-time_steps = 50000
-x_res, y_res = 1000, 1000
-t = Threebody(time_steps, x_res, y_res)
-time_array = t.sensitivity(iterations_video=True)
-# t.three_body_trajectory()
-time_array = time_steps - time_array 
-plt.style.use('dark_background')
-plt.imshow(time_array, cmap='inferno')
-plt.axis('off')
-plt.savefig('Threebody_divergence{0:04d}.png'.format(3), bbox_inches='tight', pad_inches=0, dpi=410)
-plt.show()
-plt.close()
+for i in range(300):
+	time_steps = 50000
+	x_res, y_res = 1000, 1000
+	offset = -i/300 - 10.9
+	print (f'Offset: {offset}')
+	t = Threebody(time_steps, x_res, y_res, offset)
+	time_array = t.sensitivity(iterations_video=False)
+	# t.three_body_trajectory()
+	time_array = time_steps - time_array 
+	time_array = time_array.cpu().numpy()
+	plt.style.use('dark_background')
+	plt.imshow(time_array, cmap='inferno')
+	plt.axis('off')
+	plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
+	# plt.show()
+	# plt.close()
 
 
 
