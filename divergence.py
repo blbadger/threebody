@@ -18,13 +18,13 @@ print (f'Device: {device}')
 
 class Threebody:
 
-	def __init__(self, time_steps, x_res, y_res, z_offset):
+	def __init__(self, time_steps, x_res, y_res, z_offset, m3=30):
 		self.x_res = x_res
 		self.y_res = y_res
 		self.distance = 0.5
 		self.m1 = 10
 		self.m2 = 20
-		self.m3 = 30
+		self.m3 = m3
 		self.time_steps = time_steps
 		self.p1, self.p2, self.p3 = (torch.tensor([]) for i in range(3))
 		self.v1, self.v2, self.v3 = (torch.tensor([]) for i in range(3))
@@ -420,16 +420,17 @@ class Threebody:
 		plt.close()
 
 
-
-for i in range(300):
+  
+for i in range(339, 1000):
 	time_steps = 50000
 	x_res, y_res = 1000, 1000
-	offset = -i/300 - 10.9
-	print (f'Offset: {offset}')
-	t = Threebody(time_steps, x_res, y_res, offset)
+	offset = -11 
+	mass = 30 - i / 20
+	# print (f'Offset: {offset}')
+	t = Threebody(time_steps, x_res, y_res, offset, mass)
 	time_array = t.sensitivity(iterations_video=False)
 	# t.three_body_trajectory()
-	time_array = time_steps - time_array 
+	time_array = time_steps - time_array
 	time_array = time_array.cpu().numpy()
 	plt.style.use('dark_background')
 	plt.imshow(time_array, cmap='inferno')
@@ -437,13 +438,7 @@ for i in range(300):
 	plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
 	# plt.show()
 	# plt.close()
-
-
-
-
-
-
-
+ 
 
 
 
