@@ -423,7 +423,7 @@ class Threebody:
   
 for i in range(339, 1000):
 	time_steps = 50000
-	x_res, y_res = 1000, 1000
+	x_res, y_res = 1000, 1000  
 	offset = -11 
 	mass = 30 - i / 20
 	# print (f'Offset: {offset}')
