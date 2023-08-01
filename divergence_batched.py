@@ -1,15 +1,6 @@
-#! python3
-# Produces trajectories of three bodies
-# according to Netwon's gravitation: illustrates
-# the three body problem where small changes to 
-# initial conditions cause large changes to later
-# positions
-
 # import third-party libraries
 import numpy as np 
 import matplotlib.pyplot as plt 
-from mpl_toolkits.mplot3d import Axes3D
-import numexpr as ne 
 import time
 import torch
 
@@ -114,23 +105,6 @@ class Threebody:
 		# p1_start = x_1, y_1, z_1
 		p1 = np.array([grid[0], grid[1], z])
 		p1_prime = np.array([grid2[0], grid2[1], z_prime])
-
-		# settings for yz array
-		# z, y = np.arange(20, -20, -40/self.y_res), np.arange(-20, 20, 40/self.x_res)
-		# grid = np.meshgrid(y, z)
-		# grid2 = np.meshgrid(y, z)
-
-		# # grid of all -10, identical starting x-values
-		# x = np.zeros(grid[0].shape) - 10
-
-		# # shift the grid by a small amount
-		# grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
-
-		# # grid of all -10, identical starting x-values
-		# x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
-
-		# starting coordinates for planets
-		# p1 = np.array([x, grid[0], grid[1]])
 		v1 = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
@@ -238,18 +212,18 @@ class Threebody:
 		return time_array
 
 
-batch = 8
-for i in range(339, 1000, batch):
-	time_steps = 50000
+batch_size = 8
+for i in range(0, 1000, batch_size):
+	time_steps = 15000
 	x_res, y_res = 1000, 1000
 	offset = -11 
-	masses = torch.tensor([30 - j / 20  for j in range(i, i+batch)]).unsqueeze(1).unsqueeze(1).unsqueeze(1)
+	masses = torch.tensor([30 - j / 20  for j in range(i, i+batch_size)]).view(batch_size, 1, 1, 1)
 	masses = masses.repeat(1, 3, x_res, y_res).to(device)
 
-	t = Threebody(time_steps, x_res, y_res, offset, masses, batch=batch)
+	t = Threebody(time_steps, x_res, y_res, offset, masses, batch=batch_size)
 	time_array = t.sensitivity(iterations_video=False)
 	print (time_array.shape)
-	for b in range(batch):
+	for b in range(batch_size):
 		t_arr = time_array[b, :, :]
 		print (t_arr.shape)
 		t_arr = time_steps - t_arr
@@ -261,5 +235,4 @@ for i in range(339, 1000, batch):
  
 
 
-
-
+  
