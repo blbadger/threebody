@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-
+#include <chrono>
 __global__
 void divergence(int n, 
               int steps,
@@ -37,7 +37,7 @@ void divergence(int n,
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
-    if (i < n) {
+    // if (still_together[i]==false) break;
       // compute accelerations
       dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
                   -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
@@ -93,10 +93,10 @@ void divergence(int n,
       dv_3pr_z[i] = -9.8 * m_1 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
                     -9.8 * m_2 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
-      // find which trajectories have diverged and save to *times
+      // find which trajectories have diverged and increment *times
       not_diverged[i] = sqrt(pow(p1_x[i] - p1_prime_x[i], 2) + pow(p1_y[i] - p1_prime_y[i], 2) + pow(p1_z[i] - p1_prime_z[i], 2)) <= critical_distance;
       still_together[i] &= not_diverged[i];
-      if (still_together[i]){
+      if (still_together[i] == true){
         times[i]++;
       };
 
@@ -177,12 +177,11 @@ void divergence(int n,
 
     }
   }
-}
 
 
 int main(void)
 {
-  int N = 2000000;
+  int N = 1000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -443,6 +442,7 @@ int main(void)
   cudaMalloc(&d_times, N*sizeof(int));
   cudaMalloc(&d_not_diverged, N*sizeof(bool));
 
+  for (int t=0; t<1; t++){
   int resolution = 1000;
   double range = 40;
   double step_size = range / resolution;
@@ -451,8 +451,6 @@ int main(void)
     int step = i / resolution;
     p1_x[i] = -20 + 40*(double(remainder)/double(resolution));
     p1_y[i] = -20 + 40*(double(step)/double(resolution));
-    // std::cout << p1_x[i] << '\n';
-    // std::cout << p1_y[i] << '\n';
     p1_z[i] = -11.0;
 
     p2_x[i] = 0.0;
@@ -600,52 +598,61 @@ int main(void)
   cudaMemcpy(d_nv3_prime_y, nv3_prime_y, N*sizeof(double), cudaMemcpyHostToDevice);
   cudaMemcpy(d_nv3_prime_z, nv3_prime_z, N*sizeof(double), cudaMemcpyHostToDevice);
 
-{
   cudaMemcpy(d_times, times, N*sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(d_still_together, still_together, N*sizeof(bool), cudaMemcpyHostToDevice);
   cudaMemcpy(d_not_diverged, not_diverged, N*sizeof(bool), cudaMemcpyHostToDevice);
 
   // call CUDA kernal
-  divergence<<<(N+255)/256, 2048>>>(
-    N, 
-    steps, 
-    delta_t,
-    d_still_together,
-    d_not_diverged,
-    d_times,
-    m1, m2, m3,
-    critical_distance,
-    d_p1_x, d_p1_y, d_p1_z, 
-    d_p2_x, d_p2_y, d_p2_z, 
-    d_p3_x, d_p3_y, d_p3_z, 
-    d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
-    d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
-    d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
-    d_dv_1_x, d_dv_1_y, d_dv_1_z,
-    d_dv_2_x, d_dv_2_y, d_dv_2_z,
-    d_dv_3_x, d_dv_3_y, d_dv_3_z,
-    d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
-    d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
-    d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
-    d_v1_x, d_v1_y, d_v1_z,
-    d_v2_x, d_v2_y, d_v2_z,
-    d_v3_x, d_v3_y, d_v3_z,
-    d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
-    d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
-    d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
-    d_nv1_x, d_nv1_y, d_nv1_z,
-    d_nv2_x, d_nv2_y, d_nv2_z,
-    d_nv3_x, d_nv3_y, d_nv3_z,
-    d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
-    d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
-    d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
-    );
+  divergence<<<(N+255)/256, 256>>>(
+      N, 
+      steps, 
+      delta_t,
+      d_still_together,
+      d_not_diverged,
+      d_times,
+      m1, m2, m3,
+      critical_distance,
+      d_p1_x, d_p1_y, d_p1_z, 
+      d_p2_x, d_p2_y, d_p2_z, 
+      d_p3_x, d_p3_y, d_p3_z, 
+      d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
+      d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
+      d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
+      d_dv_1_x, d_dv_1_y, d_dv_1_z,
+      d_dv_2_x, d_dv_2_y, d_dv_2_z,
+      d_dv_3_x, d_dv_3_y, d_dv_3_z,
+      d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
+      d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
+      d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
+      d_v1_x, d_v1_y, d_v1_z,
+      d_v2_x, d_v2_y, d_v2_z,
+      d_v3_x, d_v3_y, d_v3_z,
+      d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
+      d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
+      d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
+      d_nv1_x, d_nv1_y, d_nv1_z,
+      d_nv2_x, d_nv2_y, d_nv2_z,
+      d_nv3_x, d_nv3_y, d_nv3_z,
+      d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
+      d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
+      d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
+      );
 
-  cudaMemcpy(times, d_times, N*sizeof(double), cudaMemcpyDeviceToHost);
-  for (int i=0; i < 100; i++) {
-    std::cout<< times[i];
-    std::cout << ' ';
+  cudaMemcpy(times, d_times, N*sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(still_together, d_still_together, N*sizeof(bool), cudaMemcpyDeviceToHost);
+  cudaMemcpy(not_diverged, d_not_diverged, N*sizeof(bool), cudaMemcpyDeviceToHost);
+  cudaMemcpy(p1_x, d_p1_x, N*sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(p1_y, d_p1_y, N*sizeof(double), cudaMemcpyDeviceToHost);
+  for (int k=0; k<10; k++) {
+    std::cout << times[k] << ' ';
+    std::cout << still_together[k] << ' ';
+    std::cout << not_diverged[k] << ' ';
+    std::cout << p1_x[k];
+    std::cout << p1_y[k];
+    std::cout << '\n';
   }
+}
+
 
   cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
   cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);
@@ -671,6 +678,8 @@ int main(void)
   cudaFree(d_nv2_prime_x); cudaFree(d_nv2_prime_y); cudaFree(d_nv2_prime_z);
   cudaFree(d_nv3_prime_x); cudaFree(d_nv3_prime_y); cudaFree(d_nv3_prime_z);
 
+  cudaFree(d_times); cudaFree(d_still_together); cudaFree(d_not_diverged);
+
   free(p1_x); free(p1_y); free(p1_z);
   free(p2_x); free(p2_y); free(p2_z);
   free(p3_x); free(p3_y); free(p3_z);
@@ -694,7 +703,8 @@ int main(void)
   free(nv1_prime_x); free(nv1_prime_y); free(nv1_prime_z);
   free(nv2_prime_x); free(nv2_prime_y); free(nv2_prime_z);
   free(nv3_prime_x); free(nv3_prime_y); free(nv3_prime_z);
-  }
+
+  free(times); free(still_together); free(not_diverged);
 }
 
 
