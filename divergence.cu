@@ -4,99 +4,103 @@
 __global__
 void divergence(int n, 
               int steps,
-              float delta_t,
-              int *still_together,
+              double delta_t,
+              bool *still_together,
               bool *not_diverged,
               int *times,
-              float m_1,
-              float m_2, 
-              float m_3,
-              float critical_distance,
-              float *p1_x, float *p1_y, float *p1_z, 
-              float *p2_x, float *p2_y, float *p2_z, 
-              float *p3_x, float *p3_y, float *p3_x, 
-              float *p1_prime_x, float *p1_prime_y, float *p1_prime_z, 
-              float *p2_prime_x, float *p2_prime_y, float *p2_prime_z, 
-              float *p3_prime_x, float *p3_prime_y, float *p3_prime_z, 
-              float *dv_1_x, float *dv_1_y, float *dv_1_z,
-              float *dv_2_x, float *dv_2_y, float *dv_2_z,
-              float *dv_3_x, float *dv_3_y, float *dv_3_z,
-              float *dv_1pr_x, float *dv_1pr_y, float *dv_1pr_z,
-              float *dv_2pr_x, float *dv_2pr_y, float *dv_2pr_z,
-              float *dv_3pr_x, float *dv_3pr_y, float *dv_3pr_z,
-              float *nv1_x, float *nv1_y, float *nv1_z,
-              float *nv2_x, float *nv2_y, float *nv2_z,
-              float *nv3_x, float *nv3_y, float *nv3_z,
-              float *nv1_prime_x, float *nv1_prime_y, float *nv1_prime_z,
-              float *nv2_prime_x, float *nv2_prime_y, float *nv2_prime_z,
-              float *nv3_prime_x, float *nv3_prime_y, float *nv3_prime_z,
-              )
-              
+              double m_1,
+              double m_2, 
+              double m_3,
+              double critical_distance,
+              double *p1_x, double *p1_y, double *p1_z, 
+              double *p2_x, double *p2_y, double *p2_z, 
+              double *p3_x, double *p3_y, double *p3_z, 
+              double *p1_prime_x, double *p1_prime_y, double *p1_prime_z, 
+              double *p2_prime_x, double *p2_prime_y, double *p2_prime_z, 
+              double *p3_prime_x, double *p3_prime_y, double *p3_prime_z, 
+              double *dv_1_x, double *dv_1_y, double *dv_1_z,
+              double *dv_2_x, double *dv_2_y, double *dv_2_z,
+              double *dv_3_x, double *dv_3_y, double *dv_3_z,
+              double *dv_1pr_x, double *dv_1pr_y, double *dv_1pr_z,
+              double *dv_2pr_x, double *dv_2pr_y, double *dv_2pr_z,
+              double *dv_3pr_x, double *dv_3pr_y, double *dv_3pr_z,
+              double *v1_x, double *v1_y, double *v1_z,
+              double *v2_x, double *v2_y, double *v2_z,
+              double *v3_x, double *v3_y, double *v3_z,
+              double *v1_prime_x, double *v1_prime_y, double *v1_prime_z,
+              double *v2_prime_x, double *v2_prime_y, double *v2_prime_z,
+              double *v3_prime_x, double *v3_prime_y, double *v3_prime_z,
+              double *nv1_x, double *nv1_y, double *nv1_z,
+              double *nv2_x, double *nv2_y, double *nv2_z,
+              double *nv3_x, double *nv3_y, double *nv3_z,
+              double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
+              double *nv2_prime_x, double *nv2_prime_y, double *nv2_prime_z,
+              double *nv3_prime_x, double *nv3_prime_y, double *nv3_prime_z)
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
     if (i < n) {
       // compute accelerations
-      dv_1_x[i] = -9.8f * m_2 * (p1_x[i] - p2_x[i]) / powf(sqrt(powf(p1_x[i] - p2_x[i]), 2) + powf(p1_y[i] - p2_y[i], 2) + powf(p1_z[i] - p2_z[i], 2), 3) \
-                  -9.8f * m_3 * (p1_x[i] - p3_x[i]) / powf(sqrt(powf(p1_x[i] - p3_x[i]), 2) + powf(p1_y[i] - p3_y[i], 2) + powf(p1_z[i] - p3_z[i], 2), 3);
+      dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
 
-      dv_1_y[i] = -9.8f * m_2 * (p1_y[i] - p2_y[i]) / powf(sqrt(powf(p1_x[i] - p2_x[i]), 2) + powf(p1_y[i] - p2_y[i], 2) + powf(p1_z[i] - p2_z[i], 2), 3) \
-                  -9.8f * m_3 * (p1_y[i] - p3_y[i]) / powf(sqrt(powf(p1_x[i] - p3_x[i]), 2) + powf(p1_y[i] - p3_y[i], 2) + powf(p1_z[i] - p3_z[i], 2), 3);
+      dv_1_y[i] = -9.8 * m_2 * (p1_y[i] - p2_y[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
 
-      dv_1_z[i] = -9.8f * m_2 * (p1_z[i] - p2_z[i]) / powf(sqrt(powf(p1_x[i] - p2_x[i]), 2) + powf(p1_y[i] - p2_y[i], 2) + powf(p1_z[i] - p2_z[i], 2), 3) \
-                  -9.8f * m_3 * (p1_z[i] - p3_z[i]) / powf(sqrt(powf(p1_x[i] - p3_x[i]), 2) + powf(p1_y[i] - p3_y[i], 2) + powf(p1_z[i] - p3_z[i], 2), 3);
+      dv_1_z[i] = -9.8 * m_2 * (p1_z[i] - p2_z[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
 
-      dv_2_x[i] = -9.8f * m_3 * (p1_x[i] - p3_x[i]) / powf(sqrt(powf(p2_x[i] - p3_x[i]), 2) + powf(p2_y[i] - p3_y[i], 2) + powf(p2_z[i] - p3_z[i], 2), 3) \
-                  -9.8f * m_1 * (p1_x[i] - p3_x[i]) / powf(sqrt(powf(p2_x[i] - p1_x[i]), 2) + powf(p2_y[i] - p1_y[i], 2) + powf(p2_z[i] - p1_z[i], 2), 3);
+      dv_2_x[i] = -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
 
-      dv_2_y[i] = -9.8f * m_3 * (p1_y[i] - p3_y[i]) / powf(sqrt(powf(p2_x[i] - p3_x[i]), 2) + powf(p2_y[i] - p3_y[i], 2) + powf(p2_z[i] - p3_z[i], 2), 3) \
-                  -9.8f * m_1 * (p1_y[i] - p3_y[i]) / powf(sqrt(powf(p2_x[i] - p1_x[i]), 2) + powf(p2_y[i] - p1_y[i], 2) + powf(p2_z[i] - p1_z[i], 2), 3);
+      dv_2_y[i] = -9.8 * m_3 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
 
-      dv_2_z[i] = -9.8f * m_3 * (p1_z[i] - p3_z[i]) / powf(sqrt(powf(p2_x[i] - p3_x[i]), 2) + powf(p2_y[i] - p3_y[i], 2) + powf(p2_z[i] - p3_z[i], 2), 3) \
-                  -9.8f * m_1 * (p1_z[i] - p3_z[i]) / powf(sqrt(powf(p2_x[i] - p1_x[i]), 2) + powf(p2_y[i] - p1_y[i], 2) + powf(p2_z[i] - p1_z[i], 2), 3);
+      dv_2_z[i] = -9.8 * m_3 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
 
-      dv_3_x[i] = -9.8f * m_1 * (p1_x[i] - p3_x[i]) / powf(sqrt(powf(p3_x[i] - p1_x[i]), 2) + powf(p3_y[i] - p1_y[i], 2) + powf(p3_z[i] - p1_z[i], 2), 3) \
-                  -9.8f * m_2 * (p1_x[i] - p3_x[i]) / powf(sqrt(powf(p3_x[i] - p2_x[i]), 2) + powf(p3_y[i] - p2_y[i], 2) + powf(p3_z[i] - p2_z[i], 2), 3);
+      dv_3_x[i] = -9.8 * m_1 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
 
-      dv_3_y[i] = -9.8f * m_1 * (p1_y[i] - p3_y[i]) / powf(sqrt(powf(p3_x[i] - p1_x[i]), 2) + powf(p3_y[i] - p1_y[i], 2) + powf(p3_z[i] - p1_z[i], 2), 3) \
-                  -9.8f * m_2 * (p1_y[i] - p3_y[i]) / powf(sqrt(powf(p3_x[i] - p2_x[i]), 2) + powf(p3_y[i] - p2_y[i], 2) + powf(p3_z[i] - p2_z[i], 2), 3);
+      dv_3_y[i] = -9.8 * m_1 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
 
-      dv_3_z[i] = -9.8f * m_1 * (p1_z[i] - p3_z[i]) / powf(sqrt(powf(p3_x[i] - p1_x[i]), 2) + powf(p3_y[i] - p1_y[i], 2) + powf(p3_z[i] - p1_z[i], 2), 3) \
-                  -9.8f * m_2 * (p1_z[i] - p3_z[i]) / powf(sqrt(powf(p3_x[i] - p2_x[i]), 2) + powf(p3_y[i] - p2_y[i], 2) + powf(p3_z[i] - p2_z[i], 2), 3);
+      dv_3_z[i] = -9.8 * m_1 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
 
-      dv_1pr_x[i] = -9.8f * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / powf(sqrt(powf(p1_prime_x[i] - p2_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p1_prime_z[i] - p2_prime_z[i], 2), 3) \
-                    -9.8f * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / powf(sqrt(powf(p1_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p1_prime_z[i] - p3_prime_z[i], 2), 3);
+      dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
-      dv_1pr_y[i] = -9.8f * m_2 * (p1_prime_y[i] - p1_prime_y[i]) / powf(sqrt(powf(p1_prime_x[i] - p2_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p1_prime_z[i] - p2_prime_z[i], 2), 3) \
-                    -9.8f * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / powf(sqrt(powf(p1_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p1_prime_z[i] - p3_prime_z[i], 2), 3);
+      dv_1pr_y[i] = -9.8 * m_2 * (p1_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
-      dv_1pr_z[i] = -9.8f * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / powf(sqrt(powf(p1_prime_x[i] - p2_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p1_prime_z[i] - p2_prime_z[i], 2), 3) \
-                    -9.8f * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / powf(sqrt(powf(p1_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p1_prime_z[i] - p3_prime_z[i], 2), 3);
+      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
-      dv_2pr_x[i] = -9.8f * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / powf(sqrt(powf(p2_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p2_prime_z[i] - p3_prime_z[i], 2), 3) \
-                    -9.8f * m_1 * (p1_prime_x[i] - p3_prime_x[i]) / powf(sqrt(powf(p2_prime_x[i] - p1_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p2_prime_z[i] - p1_prime_z[i], 2), 3);
+      dv_2pr_x[i] = -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
 
-      dv_2pr_y[i] = -9.8f * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / powf(sqrt(powf(p2_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p2_prime_z[i] - p3_prime_z[i], 2), 3) \
-                    -9.8f * m_1 * (p1_prime_y[i] - p3_prime_y[i]) / powf(sqrt(powf(p2_prime_x[i] - p1_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p2_prime_z[i] - p1_prime_z[i], 2), 3);
+      dv_2pr_y[i] = -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
 
-      dv_2pr_z[i] = -9.8f * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / powf(sqrt(powf(p2_prime_x[i] - p3_prime_x[i]), 2) + powf(p1_prime_y[i] - p3_prime_y[i], 2) + powf(p2_prime_z[i] - p3_prime_z[i], 2), 3) \
-                    -9.8f * m_1 * (p1_prime_z[i] - p3_prime_z[i]) / powf(sqrt(powf(p2_prime_x[i] - p1_prime_x[i]), 2) + powf(p1_prime_y[i] - p1_prime_y[i], 2) + powf(p2_prime_z[i] - p1_prime_z[i], 2), 3);
+      dv_2pr_z[i] = -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
 
-      dv_3pr_x[i] = -9.8f * m_1 * (p1_prime_x[i] - p3_prime_x[i]) / powf(sqrt(powf(p3_prime_x[i] - p1_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p1_prime_z[i], 2), 3) \
-                    -9.8f * m_2 * (p1_prime_x[i] - p3_prime_x[i]) / powf(sqrt(powf(p3_prime_x[i] - p2_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p2_prime_z[i], 2), 3);
+      dv_3pr_x[i] = -9.8 * m_1 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
-      dv_3pr_y[i] = -9.8f * m_1 * (p1_prime_y[i] - p3_prime_y[i]) / powf(sqrt(powf(p3_prime_x[i] - p1_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p1_prime_z[i], 2), 3) \
-                    -9.8f * m_2 * (p1_prime_y[i] - p3_prime_y[i]) / powf(sqrt(powf(p3_prime_x[i] - p2_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p2_prime_z[i], 2), 3);
+      dv_3pr_y[i] = -9.8 * m_1 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
-      dv_3pr_z[i] = -9.8f * m_1 * (p1_prime_z[i] - p3_prime_z[i]) / powf(sqrt(powf(p3_prime_x[i] - p1_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p1_prime_z[i], 2), 3) \
-                    -9.8f * m_2 * (p1_prime_z[i] - p3_prime_z[i]) / powf(sqrt(powf(p3_prime_x[i] - p2_prime_x[i]), 2) + powf(p3_prime_y[i] - p1_prime_y[i], 2) + powf(p3_prime_z[i] - p2_prime_z[i], 2), 3);
+      dv_3pr_z[i] = -9.8 * m_1 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
       // find which trajectories have diverged and save to *diverged
-      not_diverged[i] = sqrt(powf(p1_x[i] - p1_prime_x[i], 2) + powf(p1_y[i] - p1_prime_y[i], 2) + powf(p1_z[i] - p1_prime_z[i], 2)) <= critical_distance;
+      not_diverged[i] = sqrt(pow(p1_x[i] - p1_prime_x[i], 2) + pow(p1_y[i] - p1_prime_y[i], 2) + pow(p1_z[i] - p1_prime_z[i], 2)) <= critical_distance;
       still_together[i] &= not_diverged[i];
       if (still_together[i]){
-        times[i]++
-      }
+        times[i]++;
+      };
 
       // compute new velocities
       nv1_x[i] = v1_x[i] + delta_t * dv_1_x[i];
@@ -183,190 +187,343 @@ int main(void)
   int N = 1000000;
   std::cout << N;
   int steps = 50000;
-  float *p1_x, *p1_y, *p1_z;
-  float *p2_x, *p2_y, *p2_z;
-  float *p3_x, *p3_y, *p3_z;
-  float *p1_prime_x, *p1_prime_y, *p1_prime_z;
-  float *p2_prime_x, *p2_prime_y, *p2_prime_z;
-  float *p3_prime_x, *p3_prime_y, *p3_prime_z;
-  float *dv_1_x, *dv_1_y, *dv_1_z;
-  float *dv_2_x, *dv_2_y, *dv_2_z;
-  float *dv_3_x, *dv_3_y, *dv_3_z;
+  double *p1_x, *p1_y, *p1_z;
+  double *p2_x, *p2_y, *p2_z;
+  double *p3_x, *p3_y, *p3_z;
+  double *p1_prime_x, *p1_prime_y, *p1_prime_z;
+  double *p2_prime_x, *p2_prime_y, *p2_prime_z;
+  double *p3_prime_x, *p3_prime_y, *p3_prime_z;
+  double *dv_1_x, *dv_1_y, *dv_1_z;
+  double *dv_2_x, *dv_2_y, *dv_2_z;
+  double *dv_3_x, *dv_3_y, *dv_3_z;
+  double *dv_1pr_x, *dv_1pr_y, *dv_1pr_z;
+  double *dv_2pr_x; *dv_2pr_y; *dv_2pr_z;
+  double *dv_3pr_x; *dv_3pr_y; *dv_3pr_z;
+  double *nv1_x, *nv1_y, *nv1_z;
+  double *nv2_x, *nv2_y, *nv2_z;
+  double *nv3_x, *nv3_y, *nv3_z;
+  double *nv1_prime_x, *nv1_prime_y, *nv1_prime_z;
+  double *nv2_prime_x, *nv2_prime_y, *nv2_prime_z;
+  double *nv3_prime_x, *nv3_prime_y, *nv3_prime_z;
 
-  float *d_p1_x, *d_p1_y, *d_p1_z;
-  float *d_p2_x, *d_p2_y, *d_p2_z;
-  float *d_p3_x, *d_p3_y, *d_p3_z;
-  float *d_p1_prime_x, *d_p1_prime_y, *d_p1_prime_z;
-  float *d_p2_prime_x, *d_p2_prime_y, *d_p2_prime_z;
-  float *d_p3_prime_x, *d_p3_prime_y, *d_p3_prime_z;
-  float *dv_1pr_x, *dv_1pr_y, *dv_1pr_z;
-  float *dv_2pr_x, *dv_2pr_y, *dv_2pr_z;
-  float *dv_3pr_x, *dv_3pr_y, *dv_3pr_z;
+  double *d_p1_x, *d_p1_y, *d_p1_z;
+  double *d_p2_x, *d_p2_y, *d_p2_z;
+  double *d_p3_x, *d_p3_y, *d_p3_z;
+  double *d_p1_prime_x, *d_p1_prime_y, *d_p1_prime_z;
+  double *d_p2_prime_x, *d_p2_prime_y, *d_p2_prime_z;
+  double *d_p3_prime_x, *d_p3_prime_y, *d_p3_prime_z;
+  double *d_dv_1_x, *d_dv_1_y, *d_dv_1_z;
+  double *d_dv_2_x, *d_dv_2_y, *d_dv_2_z;
+  double *d_dv_3_x, *d_dv_3_y, *d_dv_3_z;
+  double *d_dv_1pr_x, *d_dv_1pr_y, *d_dv_1pr_z;
+  double *d_dv_2pr_x, *d_dv_2pr_y, *d_dv_2pr_z;
+  double *d_dv_3pr_x, *d_dv_3pr_y, *d_dv_3pr_z;
+  double *d_nv1_x, *d_nv1_y, *d_nv1_z;
+  double *d_nv2_x, *d_nv2_y, *d_nv2_z;
+  double *d_nv3_x, *d_nv3_y, *d_nv3_z;
+  double *d_nv1_prime_x, *d_nv1_prime_y, *d_nv1_prime_z;
+  double *d_nv2_prime_x, *d_nv2_prime_y, *d_nv2_prime_z;
+  double *d_nv3_prime_x, *d_nv3_prime_y, *d_nv3_prime_z;
 
-  int *diverged, *d_diverged;
+  bool *still_together, *d_still_together;
+  int *times, *d_times;
+  bool *not_diverged, *d_not_diverged;
 
-  p1_x = (float*)malloc(N*sizeof(float));
-  p1_y = (float*)malloc(N*sizeof(float));
-  p1_z = (float*)malloc(N*sizeof(float));
+  p1_x = (double*)malloc(N*sizeof(double));
+  p1_y = (double*)malloc(N*sizeof(double));
+  p1_z = (double*)malloc(N*sizeof(double));
 
-  p2_x = (float*)malloc(N*sizeof(float));
-  p2_y = (float*)malloc(N*sizeof(float));
-  p2_z = (float*)malloc(N*sizeof(float));
+  p2_x = (double*)malloc(N*sizeof(double));
+  p2_y = (double*)malloc(N*sizeof(double));
+  p2_z = (double*)malloc(N*sizeof(double));
 
-  p3_x = (float*)malloc(N*sizeof(float));
-  p3_y = (float*)malloc(N*sizeof(float));
-  p3_z = (float*)malloc(N*sizeof(float));
+  p3_x = (double*)malloc(N*sizeof(double));
+  p3_y = (double*)malloc(N*sizeof(double));
+  p3_z = (double*)malloc(N*sizeof(double));
 
-  p1_prime_x = (float*)malloc(N*sizeof(float));
-  p1_prime_y = (float*)malloc(N*sizeof(float));
-  p1_prime_z = (float*)malloc(N*sizeof(float));
+  p1_prime_x = (double*)malloc(N*sizeof(double));
+  p1_prime_y = (double*)malloc(N*sizeof(double));
+  p1_prime_z = (double*)malloc(N*sizeof(double));
 
-  p2_prime_x = (float*)malloc(N*sizeof(float));
-  p2_prime_y = (float*)malloc(N*sizeof(float));
-  p2_prime_z = (float*)malloc(N*sizeof(float));
+  p2_prime_x = (double*)malloc(N*sizeof(double));
+  p2_prime_y = (double*)malloc(N*sizeof(double));
+  p2_prime_z = (double*)malloc(N*sizeof(double));
 
-  p3_prime_x = (float*)malloc(N*sizeof(float));
-  p3_prime_y = (float*)malloc(N*sizeof(float));
-  p3_prime_z = (float*)malloc(N*sizeof(float));
+  p3_prime_x = (double*)malloc(N*sizeof(double));
+  p3_prime_y = (double*)malloc(N*sizeof(double));
+  p3_prime_z = (double*)malloc(N*sizeof(double));
 
-  dv_1_x = (float*)malloc(N*sizeof(int));
-  dv_1_y = (float*)malloc(N*sizeof(int));
-  dv_1_z = (float*)malloc(N*sizeof(int));
+  dv_1_x = (double*)malloc(N*sizeof(double);
+  dv_1_y = (double*)malloc(N*sizeof(double));
+  dv_1_z = (double*)malloc(N*sizeof(double));
 
-  dv_2_x = (float*)malloc(N*sizeof(int));
-  dv_2_y = (float*)malloc(N*sizeof(int));
-  dv_2_z = (float*)malloc(N*sizeof(int));
+  dv_2_x = (double*)malloc(N*sizeof(double));
+  dv_2_y = (double*)malloc(N*sizeof(double));
+  dv_2_z = (double*)malloc(N*sizeof(double));
 
-  dv_3_x = (float*)malloc(N*sizeof(int));
-  dv_3_y = (float*)malloc(N*sizeof(int));
-  dv_3_z = (float*)malloc(N*sizeof(int));
+  dv_3_x = (double*)malloc(N*sizeof(double));
+  dv_3_y = (double*)malloc(N*sizeof(double));
+  dv_3_z = (double*)malloc(N*sizeof(double));
 
-  dv_1pr_x = (float*)malloc(N*sizeof(int));
-  dv_1pr_y = (float*)malloc(N*sizeof(int));
-  dv_1pr_z = (float*)malloc(N*sizeof(int));
+  dv_1pr_x = (double*)malloc(N*sizeof(double));
+  dv_1pr_y = (double*)malloc(N*sizeof(double));
+  dv_1pr_z = (double*)malloc(N*sizeof(double));
 
-  dv_2pr_x = (float*)malloc(N*sizeof(int));
-  dv_2pr_y = (float*)malloc(N*sizeof(int));
-  dv_2pr_z = (float*)malloc(N*sizeof(int));
+  dv_2pr_x = (double*)malloc(N*sizeof(double));
+  dv_2pr_y = (double*)malloc(N*sizeof(double));
+  dv_2pr_z = (double*)malloc(N*sizeof(double));
 
-  dv_3pr_x = (float*)malloc(N*sizeof(int));
-  dv_3pr_y = (float*)malloc(N*sizeof(int));
-  dv_3pr_z = (float*)malloc(N*sizeof(int));
+  dv_3pr_x = (double*)malloc(N*sizeof(double));
+  dv_3pr_y = (double*)malloc(N*sizeof(double));
+  dv_3pr_z = (double*)malloc(N*sizeof(double));
 
+  v1_x = (double*)malloc(N*sizeof(double));
+  v1_y = (double*)malloc(N*sizeof(double));
+  v1_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p1_x, N*sizeof(float)); 
-  cudaMalloc(&d_p1_y, N*sizeof(float)); 
-  cudaMalloc(&d_p1_z, N*sizeof(float)); 
+  v2_x = (double*)malloc(N*sizeof(double));
+  v2_y = (double*)malloc(N*sizeof(double));
+  v2_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p2_x, N*sizeof(float));
-  cudaMalloc(&d_p2_y, N*sizeof(float));
-  cudaMalloc(&d_p2_z, N*sizeof(float));
+  v3_x = (double*)malloc(N*sizeof(double));
+  v3_y = (double*)malloc(N*sizeof(double));
+  v3_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p3_x, N*sizeof(float));
-  cudaMalloc(&d_p3_y, N*sizeof(float));
-  cudaMalloc(&d_p3_z, N*sizeof(float));
+  v1_prime_x = (double*)malloc(N*sizeof(double));  
+  v1_prime_y = (double*)malloc(N*sizeof(double));
+  v1_prime_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p1_prime, N*sizeof(float));
-  cudaMalloc(&d_p2_prime, N*sizeof(float));
-  cudaMalloc(&d_p3_prime, N*sizeof(float));
+  v2_prime_x = (double*)malloc(N*sizeof(double));  
+  v2_prime_y = (double*)malloc(N*sizeof(double));
+  v2_prime_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p_dv_1_x, N*sizeof(float));
-  cudaMalloc(&d_p_dv_1_x, N*sizeof(float));
-  cudaMalloc(&d_p_dv_1_x, N*sizeof(float));
+  v3_prime_x = (double*)malloc(N*sizeof(double));  
+  v3_prime_y = (double*)malloc(N*sizeof(double));
+  v3_prime_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p_dv_2_x, N*sizeof(float));
-  cudaMalloc(&d_p_dv_2_y, N*sizeof(float));
-  cudaMalloc(&d_p_dv_2_z, N*sizeof(float));
+  nv1_x = (double*)malloc(N*sizeof(double));
+  nv1_y = (double*)malloc(N*sizeof(double));
+  nv1_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_p_dv_3_x, N*sizeof(float));
-  cudaMalloc(&d_p_dv_3_y, N*sizeof(float));
-  cudaMalloc(&d_p_dv_3_z, N*sizeof(float));
+  nv2_x = (double*)malloc(N*sizeof(double));
+  nv2_y = (double*)malloc(N*sizeof(double));
+  nv2_z = (double*)malloc(N*sizeof(double));
 
-  cudaMalloc(&d_diverged, N*sizeof(int));
+  nv3_x = (double*)malloc(N*sizeof(double));
+  nv3_y = (double*)malloc(N*sizeof(double));
+  nv3_z = (double*)malloc(N*sizeof(double));
 
+  nv1_prime_x = (double*)malloc(N*sizeof(double));
+  nv1_prime_y = (double*)malloc(N*sizeof(double));
+  nv1_prime_z = (double*)malloc(N*sizeof(double));
+
+  nv2_prime_x = (double*)malloc(N*sizeof(double));
+  nv2_prime_y = (double*)malloc(N*sizeof(double));
+  nv2_prime_z = (double*)malloc(N*sizeof(double));
+  
+  nv3_prime_x = (double*)malloc(N*sizeof(double));
+  nv3_prime_y = (double*)malloc(N*sizeof(double));
+  nv3_prime_z = (double*)malloc(N*sizeof(double));
+
+  still_together = (bool*)malloc(N*sizeof(bool));
+  times = (int*)malloc(N*sizeof(int));
+  not_diverged = (bool*)malloc(N*sizeof(bool));  
+
+  cudaMalloc(&d_p1_x, N*sizeof(double)); 
+  cudaMalloc(&d_p1_y, N*sizeof(double)); 
+  cudaMalloc(&d_p1_z, N*sizeof(double)); 
+
+  cudaMalloc(&d_p2_x, N*sizeof(double));
+  cudaMalloc(&d_p2_y, N*sizeof(double));
+  cudaMalloc(&d_p2_z, N*sizeof(double));
+
+  cudaMalloc(&d_p3_x, N*sizeof(double));
+  cudaMalloc(&d_p3_y, N*sizeof(double));
+  cudaMalloc(&d_p3_z, N*sizeof(double));
+
+  cudaMalloc(&d_p1_prime_x, N*sizeof(double));
+  cudaMalloc(&d_p1_prime_y, N*sizeof(double));
+  cudaMalloc(&d_p1_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_p2_prime_x, N*sizeof(double));
+  cudaMalloc(&d_p2_prime_y, N*sizeof(double));
+  cudaMalloc(&d_p2_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_p3_prime_x, N*sizeof(double));
+  cudaMalloc(&d_p3_prime_y, N*sizeof(double));
+  cudaMalloc(&d_p3_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_1_x, N*sizeof(double));
+  cudaMalloc(&d_dv_1_y, N*sizeof(double));
+  cudaMalloc(&d_dv_1_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_2_x, N*sizeof(double));
+  cudaMalloc(&d_dv_2_y, N*sizeof(double));
+  cudaMalloc(&d_dv_2_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_3_x, N*sizeof(double));
+  cudaMalloc(&d_dv_3_y, N*sizeof(double));
+  cudaMalloc(&d_dv_3_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_1pr_x, N*sizeof(double));
+  cudaMalloc(&d_dv_1pr_y, N*sizeof(double));
+  cudaMalloc(&d_dv_1pr_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_2pr_x, N*sizeof(double));
+  cudaMalloc(&d_dv_2pr_y, N*sizeof(double));
+  cudaMalloc(&d_dv_2pr_z, N*sizeof(double));
+
+  cudaMalloc(&d_dv_3pr_x, N*sizeof(double));
+  cudaMalloc(&d_dv_3pr_y, N*sizeof(double));
+  cudaMalloc(&d_dv_3pr_z, N*sizeof(double));
+
+  cudaMalloc(&d_v1_x, N*sizeof(double));
+  cudaMalloc(&d_v1_y, N*sizeof(double));
+  cudaMalloc(&d_v1_z, N*sizeof(double));
+
+  cudaMalloc(&d_v2_x, N*sizeof(double));
+  cudaMalloc(&d_v2_y, N*sizeof(double));
+  cudaMalloc(&d_v2_z, N*sizeof(double));
+
+  cudaMalloc(&d_v3_x, N*sizeof(double));
+  cudaMalloc(&d_v3_y, N*sizeof(double));
+  cudaMalloc(&d_v3_z, N*sizeof(double));
+
+  cudaMalloc(&d_v1_prime_x, N*sizeof(double));
+  cudaMalloc(&d_v1_prime_y, N*sizeof(double));
+  cudaMalloc(&d_v1_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_v2_prime_x, N*sizeof(double));
+  cudaMalloc(&d_v2_prime_y, N*sizeof(double));
+  cudaMalloc(&d_v2_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_v3_prime_x, N*sizeof(double));
+  cudaMalloc(&d_v3_prime_y, N*sizeof(double));
+  cudaMalloc(&d_v3_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv1_x, N*sizeof(double));
+  cudaMalloc(&d_nv1_y, N*sizeof(double));
+  cudaMalloc(&d_nv1_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv2_x, N*sizeof(double));
+  cudaMalloc(&d_nv2_y, N*sizeof(double));
+  cudaMalloc(&d_nv2_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv3_x, N*sizeof(double));
+  cudaMalloc(&d_nv3_y, N*sizeof(double));
+  cudaMalloc(&d_nv3_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv1_prime_x, N*sizeof(double));
+  cudaMalloc(&d_nv1_prime_y, N*sizeof(double));
+  cudaMalloc(&d_nv1_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv2_prime_x, N*sizeof(double));
+  cudaMalloc(&d_nv2_prime_y, N*sizeof(double));
+  cudaMalloc(&d_nv2_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_nv3_prime_x, N*sizeof(double));
+  cudaMalloc(&d_nv3_prime_y, N*sizeof(double));
+  cudaMalloc(&d_nv3_prime_z, N*sizeof(double));
+
+  cudaMalloc(&d_still_together, N*sizeof(bool));
+  cudaMalloc(&d_times, N*sizeof(int));
+  cudaMalloc(&not_diverged, N*sizeof(bool));
+
+  int resolution = 1000;
+  double range = 40;
+  double step_size = range / resolution;
   for (int i = 0; i < N; i++) {
-    p1_x[i] = 0.0f + i;
-    p1_y[i] = 0.0f + i;
-    p1_z[i] = 0.0f + i;
+    int remainder = i % resolution;
+    int step = i / resolution;
+    p1_x[i] = -20 + 40*(double(remainder)/double(resolution));
+    p1_y[i] = -20 + 40*(double(step)/double(resolution));
+    cout << 'x: ' << p1_x[i] << '\n';
+    cout << 'y: ' << p1_y[i] << '\n';
+    p1_z[i] = 0.0 - 11.0;
 
-    p2_x[i] = 0.0f + i;
-    p2_y[i] = 0.0f + i;
-    p2_z[i] = 0.0f + i;
+    p2_x[i] = 0.0;
+    p2_y[i] = 0.0;
+    p2_z[i] = 0.0;
 
-    p3_x[i] = 0.0f + i;
-    p3_y[i] = 0.0f + i;
-    p3_z[i] = 0.0f + i;
-
-    p1_prime[i] = 0.0f + i + 0.0001f;
-    p2_prime[i] = 0.0f + i;
-    p3_prime[i] = 0.0f + i;
-    diverged[i] = 0;
-
-    p_dv_1_x[i] = 0;
-    p_dv_1_x[i] = 0;
-    p_dv_1_x[i] = 0;
-
-    p_dv_2[i] = 0;
-    p_dv_2[i] = 0;
-    p_dv_2[i] = 0;
-
-    p_dv_3[i] = 0;
-    p_dv_3[i] = 0;
-    p_dv_3[i] = 0;
-
+    p3_x[i] = 0.0;
+    p3_y[i] = 0.0;
+    p3_z[i] = 0.0;
   }
 
-  cudaMemcpy(d_p1_x p1_x, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p1_y, p1_y, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p1_z, p1_z, N*sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_x, p1_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_y, p1_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_z, p1_z, N*sizeof(double), cudaMemcpyHostToDevice);
 
-  cudaMemcpy(d_p2_x, p2_x, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p2_y, p2_y, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p2_z, p2_z, N*sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p2_x, p2_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p2_y, p2_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p2_z, p2_z, N*sizeof(double), cudaMemcpyHostToDevice);
 
-  cudaMemcpy(d_p3_x, p3_x, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p3_y, p3_y, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p3_z, p3_z, N*sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p3_x, p3_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p3_y, p3_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p3_z, p3_z, N*sizeof(double), cudaMemcpyHostToDevice);
 
-  cudaMemcpy(d_p1_prime, p1_prime, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p2_prime, p2_prime, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p3_prime, p3_prime, N*sizeof(float), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_diverged, diverged, N*sizeof(int), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p_dv_1, p_dv_1, N*sizeof(int), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p_dv_2, p_dv_2, N*sizeof(int), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p_dv_3, p_dv_3, N*sizeof(int), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_prime_x, p1_prime_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_prime_y, p1_prime_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p1_prime_z, p1_prime_z, N*sizeof(double), cudaMemcpyHostToDevice);
 
+  cudaMemcpy(d_p2_prime_x, p2_prime_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p2_prime_y, p2_prime_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p2_prime_z, p2_prime_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_p3_prime_x, p3_prime_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p3_prime_y, p3_prime_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p3_prime_z, p3_prime_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_1_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_1_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_1_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_2_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_2_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_2_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_3_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_3_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_3_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_1pr_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_1pr_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_1pr_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_2pr_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_2pr_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_2pr_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_dv_3pr_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_3pr_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_dv_3pr_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_v1_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v1_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v1_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_v2_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v2_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v2_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy(d_v3_x, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v3_y, N*sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_v3_z, N*sizeof(double), cudaMemcpyHostToDevice);
+
+  cudaMemcpy()
+              double *v1_prime_x, double *v1_prime_y, double *v1_prime_z,
+              double *v2_prime_x, double *v2_prime_y, double *v2_prime_z,
+              double *v3_prime_x, double *v3_prime_y, double *v3_prime_z,
+              double *nv1_x, double *nv1_y, double *nv1_z,
+              double *nv2_x, double *nv2_y, double *nv2_z,
+              double *nv3_x, double *nv3_y, double *nv3_z,
+              double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
+              double *nv2_prime_x, double *nv2_prime_y, double *nv2_prime_z,
+              double *nv3_prime_x, double *nv3_prime_y, double *nv3_prime_z)
+{
   cudaMemcpy(d_times, times, N*sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(d_still_together, still_together, N*sizeof(bool), cudaMemcpyHostToDevice);
-
-int n, 
-              int steps,
-              float delta_t,
-              int *still_together,
-              bool *not_diverged,
-              int *times,
-              float m_1,
-              float m_2, 
-              float m_3,
-              float critical_distance,
-              float *p1_x, float *p1_y, float *p1_z, 
-              float *p2_x, float *p2_y, float *p2_z, 
-              float *p3_x, float *p3_y, float *p3_x, 
-              float *p1_prime_x, float *p1_prime_y, float *p1_prime_z, 
-              float *p2_prime_x, float *p2_prime_y, float *p2_prime_z, 
-              float *p3_prime_x, float *p3_prime_y, float *p3_prime_z, 
-              float *dv_1_x, float *dv_1_y, float *dv_1_z,
-              float *dv_2_x, float *dv_2_y, float *dv_2_z,
-              float *dv_3_x, float *dv_3_y, float *dv_3_z,
-              float *dv_1pr_x, float *dv_1pr_y, float *dv_1pr_z,
-              float *dv_2pr_x, float *dv_2pr_y, float *dv_2pr_z,
-              float *dv_3pr_x, float *dv_3pr_y, float *dv_3pr_z,
-              float *nv1_x, float *nv1_y, float *nv1_z,
-              float *nv2_x, float *nv2_y, float *nv2_z,
-              float *nv3_x, float *nv3_y, float *nv3_z,
-              float *nv1_prime_x, float *nv1_prime_y, float *nv1_prime_z,
-              float *nv2_prime_x, float *nv2_prime_y, float *nv2_prime_z,
-              float *nv3_prime_x, float *nv3_prime_y, float *nv3_prime_z,
+  cudaMemcpy(d_not_diverged, not_diverged, N*sizeof(bool), cudaMemcpyHostToDevice)
 
   // call CUDA kernal
   divergence<<<(N+255)/256, 256>>>(
@@ -389,6 +546,12 @@ int n,
     d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
     d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
     d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
+    d_v1_x, d_v1_y, d_v1_z,
+    d_v2_x, d_v2_y, d_v2_z,
+    d_v3_x, d_v3_y, d_v3_z,
+    d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
+    d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
+    d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
     d_nv1_x, d_nv1_y, d_nv1_z,
     d_nv2_x, d_nv2_y, d_nv2_z,
     d_nv3_x, d_nv3_y, d_nv3_z,
@@ -397,7 +560,7 @@ int n,
     d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z
     );
 
-  cudaMemcpy(times, d_times, N*sizeof(float), cudaMemcpyDeviceToHost);
+  cudaMemcpy(times, d_times, N*sizeof(double), cudaMemcpyDeviceToHost);
   for (int i=0; i < 100; i++) {
     std::cout<< times[i];
     std::cout << ' ';
@@ -450,9 +613,6 @@ int n,
   free(nv1_prime_x); free(nv1_prime_y); free(nv1_prime_z);
   free(nv2_prime_x); free(nv2_prime_y); free(nv2_prime_z);
   free(nv3_prime_x); free(nv3_prime_y); free(nv3_prime_z);
-
-}
-
 
 
 

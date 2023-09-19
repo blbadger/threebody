@@ -1,17 +1,10 @@
 #include <stdio.h>
 
 __global__
-void sax(int n, float a, float *x){
-  int i = blockIdx.x*blockDim.x + threadIdx.x;
-  if (i < n) x[i] = a*x[i];
-}
-
-__global__
 void saxpy(int n, float a, float *x, float *y)
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
-  sax<<<(N+255)/256, 256>>> (N, a, *x)
-  if (i < n) y[i] = x[i] + y[i];
+  if (i < n) y[i] = a*x[i] + y[i];
 }
 
 int main(void)
