@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <iostream>
+#include <time.h>
+#include <sys/time.h>
+#define USECPSEC 1000000ULL
 
+unsigned long long myCPUTimer(unsigned long long start=0){
+  timeval tv;
+  gettimeofday(&tv, 0);
+  return ((tv.tv_sec*USECPSEC)+tv.tv_usec)-start;
+}
+
+// kernal code
 __global__
 void saxpy(int n, float a, float *x, float *y)
 {
@@ -14,7 +24,7 @@ void saxpy(int n, float a, float *x, float *y)
 
 int main(void)
 {
-  int N = 1<<25;
+  int N = 1<<24;
   std::cout << N << '\n';
   float *x, *y, *d_x, *d_y;
   x = (float*)malloc(N*sizeof(float));
@@ -32,7 +42,11 @@ int main(void)
   cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
 
   // Perform SAXPY on 1M elements
-  saxpy<<<(N+255)/256, 256>>>(N, 2.0f, d_x, d_y);
+  long long t1 = myCPUTimer();
+  saxpy<<<(N+255)/256, 256>>>(N, 2.0, d_x, d_y);
+  // cudaDeviceSynchronize();
+  long long t2 = myCPUTimer();
+  std::cout << t2 - t1 << '\n';
 
   cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
 
