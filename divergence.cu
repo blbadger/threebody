@@ -186,7 +186,7 @@ void divergence(int n,
 int main(void)
 {
   int N = 10000;
-  int steps = 2000;
+  int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
   double m1 = 10;
