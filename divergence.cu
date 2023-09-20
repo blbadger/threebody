@@ -39,7 +39,6 @@ void divergence(int n,
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
-    if (still_together[i]==false) break;
     if (i < n){
       // compute accelerations
       dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
@@ -185,7 +184,7 @@ void divergence(int n,
 
 int main(void)
 {
-  int N = 10000;
+  int N = 90000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -610,7 +609,7 @@ int main(void)
  
   start = std::chrono::system_clock::now();
   // call CUDA kernal
-  divergence<<<(N+255)/256, 256>>>(
+  divergence<<<(N+255)/512, 32>>>(
       N, 
       steps, 
       delta_t,
