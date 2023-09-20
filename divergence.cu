@@ -69,13 +69,14 @@ void divergence(int n,
       dv_3_z[i] = -9.8 * m_1 * (p3_z[i] - p1_z[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
                   -9.8 * m_2 * (p3_z[i] - p2_z[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
 
+
       dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
                     -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
       dv_1pr_y[i] = -9.8 * m_2 * (p1_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
                     -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
-      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p1_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
                     -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
 
       dv_2pr_x[i] = -9.8 * m_3 * (p2_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
@@ -88,13 +89,13 @@ void divergence(int n,
                     -9.8 * m_1 * (p2_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
 
       dv_3pr_x[i] = -9.8 * m_1 * (p3_prime_x[i] - p1_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+                    -9.8 * m_2 * (p3_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
       dv_3pr_y[i] = -9.8 * m_1 * (p3_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+                    -9.8 * m_2 * (p3_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
       dv_3pr_z[i] = -9.8 * m_1 * (p3_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+                    -9.8 * m_2 * (p3_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
       // find which trajectories have diverged and increment *times
       not_diverged[i] = sqrt(pow(p1_x[i] - p1_prime_x[i], 2) + pow(p1_y[i] - p1_prime_y[i], 2) + pow(p1_z[i] - p1_prime_z[i], 2)) <= critical_distance;
@@ -184,8 +185,8 @@ void divergence(int n,
 
 int main(void)
 {
-  int N = 1000;
-  int steps = 50000;
+  int N = 10000;
+  int steps = 2000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
   double m1 = 10;
@@ -445,36 +446,36 @@ int main(void)
   cudaMalloc(&d_times, N*sizeof(int));
   cudaMalloc(&d_not_diverged, N*sizeof(bool));
 
-  int resolution = 10000;
+  int resolution = sqrt(N);
   double range = 40;
   double step_size = range / resolution;
   for (int i = 0; i < N; i++) {
     int remainder = i % resolution;
     int step = i / resolution;
-    p1_x[i] = -20 + 40*(double(remainder)/double(resolution));
-    p1_y[i] = -20 + 40*(double(step)/double(resolution));
+    p1_x[i] = -20. + 40*(double(remainder)/double(resolution));
+    p1_y[i] = -20. + 40*(double(step)/double(resolution));
     p1_z[i] = -11.0;
 
     p2_x[i] = 0.0;
     p2_y[i] = 0.0;
     p2_z[i] = 0.0;
 
-    p3_x[i] = 10.;
-    p3_y[i] = 10.;
-    p3_z[i] = 12.;
+    p3_x[i] = 10.0;
+    p3_y[i] = 10.0;
+    p3_z[i] = 12.0;
 
     // shift p1 in all x, y, z vectors
-    p1_prime_x[i] = -20 + 40*(double(remainder)/double(resolution)) + 0.001;
-    p1_prime_y[i] = -20 + 40*(double(step)/double(resolution)) + 0.001;
+    p1_prime_x[i] = -20. + 40*(double(remainder)/double(resolution)) + 0.001;
+    p1_prime_y[i] = -20. + 40*(double(step)/double(resolution)) + 0.001;
     p1_prime_z[i] = -11.0 + 0.001;
 
-    p2_prime_x[i] = 0.;
-    p2_prime_y[i] = 0.;
-    p2_prime_z[i] = 0.;
+    p2_prime_x[i] = 0.0;
+    p2_prime_y[i] = 0.0;
+    p2_prime_z[i] = 0.0;
 
-    p3_prime_x[i] = 10.;
-    p3_prime_y[i] = 10.;
-    p3_prime_z[i] = 12.;
+    p3_prime_x[i] = 10.0;
+    p3_prime_y[i] = 10.0;
+    p3_prime_z[i] = 12.0;
 
     v1_x[i] = -3.;
     v1_y[i] = 0.;
@@ -484,7 +485,7 @@ int main(void)
     v2_y[i] = 0.;
     v2_z[i] = 0.;
 
-    v3_x[i] = 0.;
+    v3_x[i] = 3.;
     v3_y[i] = 0.;
     v3_z[i] = 0.;
 
@@ -496,7 +497,7 @@ int main(void)
     v2_prime_y[i] = 0.;
     v2_prime_z[i] = 0.;
 
-    v3_prime_x[i] = 0.;
+    v3_prime_x[i] = 3.;
     v3_prime_y[i] = 0.;
     v3_prime_z[i] = 0.;
 
@@ -652,18 +653,25 @@ int main(void)
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 
-
   cudaMemcpy(times, d_times, N*sizeof(int), cudaMemcpyDeviceToHost);
   cudaMemcpy(still_together, d_still_together, N*sizeof(bool), cudaMemcpyDeviceToHost);
   cudaMemcpy(not_diverged, d_not_diverged, N*sizeof(bool), cudaMemcpyDeviceToHost);
   cudaMemcpy(p1_x, d_p1_x, N*sizeof(double), cudaMemcpyDeviceToHost);
   cudaMemcpy(p1_y, d_p1_y, N*sizeof(double), cudaMemcpyDeviceToHost);
-  for (int k=0; k<10; k++) {
+  cudaMemcpy(p1_z, d_p1_z, N*sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(p1_prime_x, d_p1_prime_x, N*sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(p1_prime_y, d_p1_prime_y, N*sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(p1_prime_z, d_p1_prime_z, N*sizeof(double), cudaMemcpyDeviceToHost);
+  for (int k=0; k<2; k++) {
     std::cout << times[k] << ' ';
     std::cout << still_together[k] << ' ';
-    std::cout << not_diverged[k] << ' ';
-    std::cout << p1_x[k];
-    std::cout << p1_y[k];
+    std::cout << not_diverged[k] << '\n';
+    std::cout << p1_x[k] << ' ';
+    std::cout << p1_y[k] << ' ';
+    std::cout << p1_z[k] << ' ';
+    std::cout << p1_prime_x[k] << ' ';
+    std::cout << p1_prime_y[k] << ' ';
+    std::cout << p1_prime_z[k] << ' ';
     std::cout << '\n';
   }
 

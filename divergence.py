@@ -268,6 +268,7 @@ class Threebody:
 			self.p3_prime = self.p3_prime + self.v3_prime * delta_t
 			self.v1_prime, self.v2_prime, self.v3_prime = nv1_prime, nv2_prime, nv3_prime
 
+		print (self.p1, self.p1_prime)
 		return time_array
 
 
@@ -298,7 +299,7 @@ class Threebody:
 
 		# starting coordinates for planets shifted
 		# p1_start = x_1, y_1, z_1
-		p1_start_prime = np.array([-10.001, 10.001, -11.001])
+		p1_start_prime = np.array([-9.999, 10.001, -10.999])
 		v1_start_prime = np.array([-3, 0, 0])
 
 		# p2_start = x_2, y_2, z_2
@@ -421,26 +422,22 @@ class Threebody:
 
 
   
-for i in range(339, 1000):
-	time_steps = 50000
-	x_res, y_res = 1000, 1000  
+for i in range(1):
+	time_steps = 2000
+	x_res, y_res = 100, 100 
 	offset = -11 
-	mass = 30 - i / 20
+	mass = 30
 	# print (f'Offset: {offset}')
 	t = Threebody(time_steps, x_res, y_res, offset, mass)
 	time_array = t.sensitivity(iterations_video=False)
 	# t.three_body_trajectory()
-	time_array = time_steps - time_array
-	time_array = time_array.cpu().numpy()
-	plt.style.use('dark_background')
-	plt.imshow(time_array, cmap='inferno')
-	plt.axis('off')
-	plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
+	# time_array = time_steps - time_array
+	# time_array = time_array.cpu().numpy()
+	# plt.style.use('dark_background')
+	# plt.imshow(time_array, cmap='inferno')
+	# plt.axis('off')
+	# plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
 	# plt.show()
 	# plt.close()
  
-
-
-
-
 
