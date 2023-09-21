@@ -608,8 +608,8 @@ int main(void)
   std::chrono::time_point<std::chrono::system_clock> start, end;
  
   start = std::chrono::system_clock::now();
-  // call CUDA kernal
-  divergence<<<(N+255)/512, 32>>>(
+  // call CUDA kernal in <<< , >>>>
+  divergence<<<(N+255)/4096, 32>>>(
       N, 
       steps, 
       delta_t,
