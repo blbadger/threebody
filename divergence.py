@@ -221,7 +221,7 @@ class Threebody:
 		"""
 
 		delta_t = self.delta_t
-		self.initialize_arrays(double_type=True)
+		self.initialize_arrays(double_type=False)
 		time_array = torch.zeros(self.p1[0].shape).to(device)
 
 		# bool array of all True
@@ -425,19 +425,19 @@ class Threebody:
 for i in range(1):
 	time_steps = 50000
 	x_res, y_res = 1000, 1000
-	offset = -11 
+	offset = -11
 	mass = 30
 	# print (f'Offset: {offset}')
 	t = Threebody(time_steps, x_res, y_res, offset, mass)
 	time_array = t.sensitivity(iterations_video=False)
 	# t.three_body_trajectory()
-	# time_array = time_steps - time_array
-	# time_array = time_array.cpu().numpy()
-	# plt.style.use('dark_background')
-	# plt.imshow(time_array, cmap='inferno')
-	# plt.axis('off')
-	# plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
-	# plt.show()
-	# plt.close()
+	time_array = time_steps - time_array
+	time_array = time_array.cpu().numpy()
+	plt.style.use('dark_background')
+	plt.imshow(time_array, cmap='inferno')
+	plt.axis('off')
+	plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
+	plt.show()
+	plt.close()
  
 

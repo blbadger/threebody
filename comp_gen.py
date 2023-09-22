@@ -22,4 +22,3 @@ d = 'p2'
 m = '3'
 t = 'z'
 print (generate_string(a, b, c, d, t, prime=True))
-
