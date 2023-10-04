@@ -231,6 +231,10 @@ class Threebody:
 		# evolution of the system
 		for i in range(self.time_steps):
 			if i % 1000 == 0:
+				print (torch.max(self.p1))
+				print (torch.max(self.p1_prime))
+				print (torch.min(self.p1))
+				print (torch.min(self.p1_prime))
 				print (f'Iteration: {i}')
 				print (f'Comleted in: {round(time.time() - t, 2)} seconds')
 				t = time.time()
@@ -268,7 +272,6 @@ class Threebody:
 			self.p3_prime = self.p3_prime + self.v3_prime * delta_t
 			self.v1_prime, self.v2_prime, self.v3_prime = nv1_prime, nv2_prime, nv3_prime
 
-		print (self.p1, self.p1_prime)
 		return time_array
 
 
@@ -424,7 +427,7 @@ class Threebody:
   
 for i in range(1):
 	time_steps = 50000
-	x_res, y_res = 1000, 1000
+	x_res, y_res = 300, 300
 	offset = -11
 	mass = 30
 	# print (f'Offset: {offset}')

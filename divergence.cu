@@ -154,7 +154,7 @@ void divergence(int n,
 
 int main(void)
 {
-  int N = 100;
+  int N = 1000000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -646,19 +646,6 @@ int main(void)
     std::cout << p1_prime_z[k] << ' ';
     std::cout << '\n';
   }
-
-  // PyArray_SimpleNew allocates the memory needed for the array.
-  ArgsArray = PyArray_SimpleNew(2, Dims, NPY_DOUBLE);
-
-  // The pointer to the array data is accessed using PyArray_DATA()
-  double *p = (double *) PyArray_DATA(ArgsArray);
-
-  // Copy the data from the "array of arrays" to the contiguous numpy array.
-  for (int k = 0; k < NumRows; ++k) {
-    memcpy(p, X_test2[k], sizeof(double) * NumInputs);
-    p += NumInputs;
-  }
-
 
   cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
   cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);

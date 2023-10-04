@@ -15,10 +15,24 @@ void saxpy(int n, float a, float *x, float *y)
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < 1000; j++){
     if (i < n) {
-      float num = x[i];
       y[i] = 20*i;
     }
   }
+}
+
+// #define SHIFT_AMOUNT 16 // 2^16 = 65536
+// #define SHIFT_MASK ((1 << SHIFT_AMOUNT) - 1) // 65535 (all LSB set, all MSB clear)
+
+int main(void) {
+  int shift_amount = 28;
+  int shift_mask = (1 << shift_amount) - 1;
+  int price = -(1 << shift_amount);
+  printf ("price is %d\n", price );
+  price = price * 3.2435869;
+  printf ("price is %d\n", price );
+  printf ("price is %d\n", price  >> shift_amount);
+  printf ("price fraction is %d\n", price & shift_mask);
+  printf("price fraction in decimal is %.10g", ((double)(price & shift_mask) / (1 << shift_amount)));
 }
 
 extern "C" {
