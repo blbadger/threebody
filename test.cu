@@ -15,8 +15,7 @@ void saxpy(int n, float a, float *x, float *y)
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < 1000; j++){
     if (i < n) {
-      uint val = 300*300;
-      y[i] = sqrt(val);
+      y[i] = 20*i;
     }
   }
 }
@@ -25,17 +24,20 @@ void saxpy(int n, float a, float *x, float *y)
 // #define SHIFT_MASK ((1 << SHIFT_AMOUNT) - 1) // 65535 (all LSB set, all MSB clear)
 
 int main(void) {
-  int shift_amount = 30;
+  int shift_amount = 28;
   int shift_mask = (1 << shift_amount) - 1;
-  uint price = 1 << shift_amount;
+  int price = -(1 << shift_amount);
   printf ("price is %d\n", price );
-  price = price * 3.2435869;  
-  price = sqrt(price);
+  price = price * 3.2435869;
   printf ("price is %d\n", price );
   printf ("price is %d\n", price  >> shift_amount);
   printf ("price fraction is %d\n", price & shift_mask);
   printf("price fraction in decimal is %.10g", ((double)(price & shift_mask) / (1 << shift_amount)));
+}
 
+extern "C" {
+float* save_arr()
+  {
     int N = 1<<20;
     float *x, *y, *d_x, *d_y;
     x = (float*)malloc(N*sizeof(float));
@@ -67,10 +69,10 @@ int main(void) {
     std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 
     cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
-    printf("%.10g", y[0]);
+
     cudaFree(d_x);
     cudaFree(d_y);
     free(x);
-
-  
+    return y;
+  }
 }
