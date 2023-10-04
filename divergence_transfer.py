@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 f = ctypes.CDLL('./divergence.so').divergence
 dim = 1000
-time_steps = 200000
+time_steps = 50000
 f.restype = ctypes.POINTER(ctypes.c_int * dim**2)
 arr = f(dim, time_steps).contents
 print (type(arr))
