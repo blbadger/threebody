@@ -154,7 +154,7 @@ void divergence(int n,
 
 int main(void)
 {
-  int N = 1000000;
+  int N = 10000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -580,7 +580,7 @@ int main(void)
   start = std::chrono::system_clock::now();
 
   // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx>>>>
-  divergence<<<(N+255), 256, 256>>>(
+  divergence<<<(N+127)/128, 128>>>(
       N, 
       steps, 
       delta_t,
@@ -667,6 +667,14 @@ int main(void)
   cudaFree(d_nv2_x); cudaFree(d_nv2_y); cudaFree(d_nv2_z);
   cudaFree(d_nv3_x); cudaFree(d_nv3_y); cudaFree(d_nv3_z);
 
+  cudaFree(d_v1_x); cudaFree(d_v1_y); cudaFree(d_v1_z);
+  cudaFree(d_v2_x); cudaFree(d_v2_y); cudaFree(d_v2_z);
+  cudaFree(d_v3_x); cudaFree(d_v3_y); cudaFree(d_v3_z);
+
+  cudaFree(d_v1_prime_x); cudaFree(d_v1_prime_y); cudaFree(d_v1_prime_z);
+  cudaFree(d_v2_prime_x); cudaFree(d_v2_prime_y); cudaFree(d_v2_prime_z);
+  cudaFree(d_v3_prime_x); cudaFree(d_v3_prime_y); cudaFree(d_v3_prime_z);
+
   cudaFree(d_nv1_prime_x); cudaFree(d_nv1_prime_y); cudaFree(d_nv1_prime_z);
   cudaFree(d_nv2_prime_x); cudaFree(d_nv2_prime_y); cudaFree(d_nv2_prime_z);
   cudaFree(d_nv3_prime_x); cudaFree(d_nv3_prime_y); cudaFree(d_nv3_prime_z);
@@ -689,6 +697,14 @@ int main(void)
   free(dv_2pr_x); free(dv_2pr_y); free(dv_2pr_z);
   free(dv_3pr_x); free(dv_3pr_y); free(dv_3pr_z);
 
+  free(v1_x); free(v1_y); free(v1_z);
+  free(v2_x); free(v2_y); free(v2_z);
+  free(v3_x); free(v3_y); free(v3_z);
+
+  free(v1_prime_x); free(v1_prime_y); free(v1_prime_z);
+  free(v2_prime_x); free(v2_prime_y); free(v2_prime_z);
+  free(v3_prime_x); free(v3_prime_y); free(v3_prime_z);
+
   free(nv1_x); free(nv1_y); free(nv1_z);
   free(nv2_x); free(nv2_y); free(nv2_z);
   free(nv3_x); free(nv3_y); free(nv3_z);
@@ -696,6 +712,7 @@ int main(void)
   free(nv1_prime_x); free(nv1_prime_y); free(nv1_prime_z);
   free(nv2_prime_x); free(nv2_prime_y); free(nv2_prime_z);
   free(nv3_prime_x); free(nv3_prime_y); free(nv3_prime_z);
+
 
   free(times); free(still_together); free(not_diverged);
 

@@ -18,7 +18,7 @@ print (f'Device: {device}')
 
 class Threebody:
 
-	def __init__(self, time_steps, x_res, y_res, z_offset, m3=30):
+	def __init__(self, time_steps, x_res, y_res, z_offset, m3=30, exponent=3):
 		self.x_res = x_res
 		self.y_res = y_res
 		self.distance = 0.5
@@ -35,6 +35,7 @@ class Threebody:
 
 		# assign a small number to each time step
 		self.delta_t = 0.001
+		self.exponent = exponent
 
 
 	def accelerations(self, p1, p2, p3):
@@ -54,15 +55,16 @@ class Threebody:
 
 		"""
 
+		e = self.exponent
 		m_1, m_2, m_3 = self.m1, self.m2, self.m3
-		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(torch.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
-					   9.8 * m_3 * (p1 - p3)/(torch.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
+		planet_1_dv = -9.8 * m_2 * (p1 - p2)/(torch.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**e) - \
+					   9.8 * m_3 * (p1 - p3)/(torch.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**e)
 
-		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(torch.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
-					   9.8 * m_1 * (p2 - p1)/(torch.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
+		planet_2_dv = -9.8 * m_3 * (p2 - p3)/(torch.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**e) - \
+					   9.8 * m_1 * (p2 - p1)/(torch.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**e)
 
-		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(torch.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
-					   9.8 * m_2 * (p3 - p2)/(torch.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
+		planet_3_dv = -9.8 * m_1 * (p3 - p1)/(torch.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**e) - \
+					   9.8 * m_2 * (p3 - p2)/(torch.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**e)
 
 		return planet_1_dv, planet_2_dv, planet_3_dv
 
@@ -422,7 +424,6 @@ class Threebody:
 		plt.savefig('{}'.format(t), dpi=300, bbox_inches='tight')
 		plt.show()
 		plt.close()
-
 
   
 for i in range(1):
