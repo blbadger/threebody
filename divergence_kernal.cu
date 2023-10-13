@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
+#include <cuda_fp16.h>
 
 // kernal declaration
 __global__
@@ -155,9 +156,9 @@ void divergence(int n,
   }
 
 extern "C" {
-  int* divergence(int dimension, int time_steps)
+  int* divergence(int x_res, int y_res, int time_steps, double x_center, double x_range, double y_center, double y_range, double shift_distance)
   {
-    int N = dimension*dimension;
+    int N = x_res * y_res;
     int steps = time_steps;
     double delta_t = 0.001;
     double critical_distance = 0.5;
@@ -418,14 +419,14 @@ extern "C" {
     cudaMalloc(&d_times, N*sizeof(int));
     cudaMalloc(&d_not_diverged, N*sizeof(bool));
 
-    int resolution = sqrt(N);
-    double range = 40;
-    double step_size = range / resolution;
+    double start_x = x_center - x_range/2;
+    double start_y = y_center - y_range/2;
+
     for (int i = 0; i < N; i++) {
-      int remainder = i % resolution;
-      int step = i / resolution;
-      p1_x[i] = -20. + 40*(double(remainder)/double(resolution));
-      p1_y[i] = -20. + 40*(double(step)/double(resolution));
+      int remainder = i % y_res;
+      int step = i / x_res;
+      p1_x[i] = start_x + x_range*(double(remainder)/double(x_res)); // 5.3
+      p1_y[i] = start_y + y_range*(double(step)/double(y_res)); // 0.45
       p1_z[i] = -11.0;
 
       p2_x[i] = 0.0;
@@ -437,9 +438,9 @@ extern "C" {
       p3_z[i] = 12.0;
 
       // shift p1 in all x, y, z vectors
-      p1_prime_x[i] = -20. + 40*(double(remainder)/double(resolution)) + 0.001;
-      p1_prime_y[i] = -20. + 40*(double(step)/double(resolution)) + 0.001;
-      p1_prime_z[i] = -11.0 + 0.001;
+      p1_prime_x[i] = start_x + x_range*(double(remainder)/double(x_res)) + shift_distance; // 0.0000001
+      p1_prime_y[i] = start_y + y_range*(double(step)/double(y_res)) + shift_distance;
+      p1_prime_z[i] = -11.0 + shift_distance;
 
       p2_prime_x[i] = 0.0;
       p2_prime_y[i] = 0.0;
@@ -648,6 +649,14 @@ extern "C" {
     cudaFree(d_nv2_x); cudaFree(d_nv2_y); cudaFree(d_nv2_z);
     cudaFree(d_nv3_x); cudaFree(d_nv3_y); cudaFree(d_nv3_z);
 
+    cudaFree(d_v1_x); cudaFree(d_v1_y); cudaFree(d_v1_z);
+    cudaFree(d_v2_x); cudaFree(d_v2_y); cudaFree(d_v2_z);
+    cudaFree(d_v3_x); cudaFree(d_v3_y); cudaFree(d_v3_z);
+
+    cudaFree(d_v1_prime_x); cudaFree(d_v1_prime_y); cudaFree(d_v1_prime_z);
+    cudaFree(d_v2_prime_x); cudaFree(d_v2_prime_y); cudaFree(d_v2_prime_z);
+    cudaFree(d_v3_prime_x); cudaFree(d_v3_prime_y); cudaFree(d_v3_prime_z);
+
     cudaFree(d_nv1_prime_x); cudaFree(d_nv1_prime_y); cudaFree(d_nv1_prime_z);
     cudaFree(d_nv2_prime_x); cudaFree(d_nv2_prime_y); cudaFree(d_nv2_prime_z);
     cudaFree(d_nv3_prime_x); cudaFree(d_nv3_prime_y); cudaFree(d_nv3_prime_z);
@@ -670,6 +679,14 @@ extern "C" {
     free(dv_2pr_x); free(dv_2pr_y); free(dv_2pr_z);
     free(dv_3pr_x); free(dv_3pr_y); free(dv_3pr_z);
 
+    free(v1_x); free(v1_y); free(v1_z);
+    free(v2_x); free(v2_y); free(v2_z);
+    free(v3_x); free(v3_y); free(v3_z);
+
+    free(v1_prime_x); free(v1_prime_y); free(v1_prime_z);
+    free(v2_prime_x); free(v2_prime_y); free(v2_prime_z);
+    free(v3_prime_x); free(v3_prime_y); free(v3_prime_z);
+
     free(nv1_x); free(nv1_y); free(nv1_z);
     free(nv2_x); free(nv2_y); free(nv2_z);
     free(nv3_x); free(nv3_y); free(nv3_z);
@@ -677,6 +694,7 @@ extern "C" {
     free(nv1_prime_x); free(nv1_prime_y); free(nv1_prime_z);
     free(nv2_prime_x); free(nv2_prime_y); free(nv2_prime_z);
     free(nv3_prime_x); free(nv3_prime_y); free(nv3_prime_z);
+
 
     free(still_together); free(not_diverged);
     return times;
