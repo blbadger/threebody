@@ -35,7 +35,7 @@ class Threebody:
 		self.z_offset = z_offset
 
 		# assign a small number to each time step
-		self.delta_t = 0.01
+		self.delta_t = 0.0001
 		self.exponent = exponent
 
 
@@ -130,7 +130,7 @@ class Threebody:
 		plt.close()
 		return
 
-	def initialize_arrays(self, xrange=0.1, yrange=0.1, x_center=1.5, y_center=0, double_type=True):
+	def initialize_arrays(self, xrange=0.001, yrange=0.001, x_center=0.8, y_center=0, double_type=True, shift=1e-7):
 		"""
 		Initialize torch.Tensor arrays
 
@@ -149,32 +149,16 @@ class Threebody:
 
 		# grid of all -11, identical starting z-values
 		z_offset = self.z_offset
-		z = np.zeros(grid[0].shape) + z_offset # - 11
+		z = np.zeros(grid[0].shape) + z_offset
 
 		# shift the grid by a small amount
-		grid2 = grid2[0] + 1e-6, grid2[1] + 1e-6
+		grid2 = grid2[0] + shift, grid2[1] + shift
 		# grid of all -11, identical starting z-values
-		z_prime = np.zeros(grid[0].shape) - 11 + 1e-5
+		z_prime = np.zeros(grid[0].shape) - 11 + shift
 
 		# p1_start = x_1, y_1, z_1
 		p1 = np.array([grid[0], grid[1], z])
 		p1_prime = np.array([grid2[0], grid2[1], z_prime])
-
-		# z, y = np.arange(20, -20, -40/self.y_res), np.arange(-20, 20, 40/self.x_res)
-		# grid = np.meshgrid(y, z)
-		# grid2 = np.meshgrid(y, z)
-
-		# # grid of all -10, identical starting x-values
-		# x = np.zeros(grid[0].shape) - 10
-
-		# # shift the grid by a small amount
-		# grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
-
-		# # grid of all -10, identical starting x-values
-		# x_prime = np.zeros(grid[0].shape) - 10 + 1e-3
-
-		# starting coordinates for planets
-		# p1 = np.array([x, grid[0], grid[1]])
 		v1 = np.array([np.ones(grid[0].shape) * -3, np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 
 		p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
@@ -222,6 +206,9 @@ class Threebody:
 			# note that array is newest to the right, oldest left
 			fn, fn_1 = fn_arr[-1], fn_arr[-2]
 			v = current + (1/2) * self.delta_t * (3*fn - 1*fn_1)
+
+		elif order == 1:
+			v = current + self.delta_t * fn_arr[-1]
 
 		return v
 
@@ -332,21 +319,18 @@ class Threebody:
 
   
 for i in range(1):
-	time_steps = 8000
-	x_res, y_res = 500, 500
+	time_steps = 100000
+	x_res, y_res = 300, 300
 	offset = -11
 	mass = 30
-	# print (f'Offset: {offset}')
 	t = Threebody(time_steps, x_res, y_res, offset, mass)
 	time_array = t.sensitivity_bashforth(iterations_video=False, double_type=True)
-	# t.three_body_trajectory()
 	time_array = time_steps - time_array
 	time_array = time_array.cpu().numpy()
 	plt.style.use('dark_background')
 	plt.imshow(time_array, cmap='inferno')
 	plt.axis('off')
 	plt.savefig('Threebody_divergence{0:04d}.png'.format(i+1), bbox_inches='tight', pad_inches=0, dpi=410)
-	# plt.show()
 	plt.close()
  
 
