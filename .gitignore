@@ -1,0 +1,5 @@
+# ignore image outputs
+*.png
+
+# ignore shared output files
+*.so

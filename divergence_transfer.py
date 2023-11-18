@@ -3,11 +3,12 @@ import ctypes
 import matplotlib.pyplot as plt 
 
 f = ctypes.CDLL('./divergence.so').divergence
-for i in range(170, 900):
+for i in range(788, 900):
 	print (i)
 	x_res = 1000
 	y_res = 1000
 	time_steps = int(50000 + (350000 * i / 400))
+	# time_steps = 50000
 	shift_distance = 0.001 / (2**(i/30))
 	x_center = 5.30031
 	y_center = -0.45
@@ -28,3 +29,4 @@ for i in range(170, 900):
 	plt.savefig('Threebody_divergence{0:04d}.png'.format(i), bbox_inches='tight', pad_inches=0, dpi=410)
 	plt.close()
 	del arr
+

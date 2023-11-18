@@ -83,7 +83,6 @@ for i in range(60):
 			return_arr.append(return_template[k])
 
 
-
 	output_array = np.array(return_arr).reshape(x_res, y_res)
 	output_array = time_steps - output_array
 	plot(output_array, i)
@@ -93,6 +92,10 @@ for i in range(60):
 	for pair in already_computed.keys():
 		if pair[0] > start_x + x_range or pair[0] < start_x or pair[1] > start_y + y_range or pair[1] < start_y:
 			keys_to_delete.append(pair)
+		npair = []
+		npair[0] = round(pair[0], decimal)
+		npair[1] = round(already[0], decimal)
+
 	print (len(already_computed))
 	for k in keys_to_delete:
 		already_computed.pop(k, None)
