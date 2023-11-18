@@ -130,7 +130,7 @@ class Threebody:
 		plt.close()
 		return
 
-	def initialize_arrays(self, double_type=True):
+	def initialize_arrays(self, xrange=0.1, yrange=0.1, x_center=1.5, y_center=0, double_type=True):
 		"""
 		Initialize torch.Tensor arrays
 
@@ -141,10 +141,10 @@ class Threebody:
 			None
 
 		"""
-		# y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
-		y, x = np.arange(-0.4501, -0.4499, 0.0002/y_res), np.arange(5.2999, 5.3001, 0.0002/x_res)
+		y_lower, y_upper = y_center - yrange/2, y_center + yrange/2
+		x_lower, x_upper = x_center - xrange/2, x_center + xrange/2
+		y, x = np.arange(y_lower, y_upper, yrange/y_res), np.arange(x_lower, x_upper, xrange/x_res)
 		grid = np.meshgrid(x, y)
-
 		grid2 = np.meshgrid(x, y)
 
 		# grid of all -11, identical starting z-values
@@ -154,7 +154,7 @@ class Threebody:
 		# shift the grid by a small amount
 		grid2 = grid2[0] + 1e-6, grid2[1] + 1e-6
 		# grid of all -11, identical starting z-values
-		z_prime = np.zeros(grid[0].shape) - 11 + 1e-6	
+		z_prime = np.zeros(grid[0].shape) - 11 + 1e-5
 
 		# p1_start = x_1, y_1, z_1
 		p1 = np.array([grid[0], grid[1], z])
@@ -211,83 +211,21 @@ class Threebody:
 
 		return
 
+	def adams_bashforth(self, current, fn_arr, order=2):
+		assert len(fn_arr) >= order
+		if order == 4:
+			# note that array is newest to the right, oldest left
+			fn, fn_1, fn_2, fn_3 = fn_arr[-1], fn_arr[-2], fn_arr[-3], fn_arr[-4]
+			v = current + (1/24) * self.delta_t * (55*fn - 59*fn_1 + 37*fn_2 - 9*fn_3)
 
-	def sensitivity(self, iterations_video=False, double_type=True):
-		"""
-		Determine the sensitivity to initial values per starting point of planet 1, as
-		measured by the time until divergence.
+		elif order == 2:
+			# note that array is newest to the right, oldest left
+			fn, fn_1 = fn_arr[-1], fn_arr[-2]
+			v = current + (1/2) * self.delta_t * (3*fn - 1*fn_1)
 
-		kwargs:
-			iterations_video: Bool, if True then divergence is plotted every 100 time steps
-
-		Returns:
-			time_array: np.ndarray[int] of iterations until divergence
-
-		"""
-
-		delta_t = self.delta_t
-		self.initialize_arrays(double_type=double_type)
-		time_array = torch.zeros(self.p1[0].shape).to(device)
-
-		# bool array of all True
-		still_together = time_array < 1e10
-
-		t = time.time()
-		# evolution of the system
-		for i in range(self.time_steps):
-			if i % 1000 == 0:
-				print (f'Iteration: {i}')
-				print (f'Completed in: {round(time.time() - t, 2)} seconds')
-				t = time.time()
-				time_array2 = i - time_array 
-				if iterations_video:
-					self.plot_projection(time_array2, i)
-
-			not_diverged = self.not_diverged(self.p1, self.p1_prime)
-
-			# points still together are not diverging now and have not previously
-			still_together &= not_diverged
-
-			# apply boolean mask to ndarray time_array
-			time_array[still_together] += 1
-
-			# calculate derivatives and store as class variables self.p1 ...
-			dv1, dv2, dv3 = self.accelerations(self.p1, self.p2, self.p3)
-			dv1_prime, dv2_prime, dv3_prime = self.accelerations(self.p1_prime, self.p2_prime, self.p3_prime)
-
-			nv1 = self.v1 + dv1 * delta_t
-			nv2 = self.v2 + dv2 * delta_t
-			nv3 = self.v3 + dv3 * delta_t
-
-			self.p1 = self.p1 + self.v1 * delta_t
-			self.p2 = self.p2 + self.v2 * delta_t
-			self.p3 = self.p3 + self.v3 * delta_t
-			self.v1, self.v2, self.v3 = nv1, nv2, nv3
-
-			nv1_prime = self.v1_prime + dv1_prime * delta_t
-			nv2_prime = self.v2_prime + dv2_prime * delta_t
-			nv3_prime = self.v3_prime + dv3_prime * delta_t
-
-			self.p1_prime = self.p1_prime + self.v1_prime * delta_t
-			self.p2_prime = self.p2_prime + self.v2_prime * delta_t
-			self.p3_prime = self.p3_prime + self.v3_prime * delta_t
-			self.v1_prime, self.v2_prime, self.v3_prime = nv1_prime, nv2_prime, nv3_prime
-
-		return time_array
-
-	def adam_bashforth(self, current, fn_arr):
-		# note that array is newest to the right, oldest left
-		fn, fn_1, fn_2, fn_3 = fn_arr[-1], fn_arr[-2], fn_arr[-3], fn_arr[-4]
-		v = current + (1/24) * self.delta_t * (55*fn - 59*fn_1 + 37*fn_2 - 9*fn_3)
 		return v
 
-	# def adam_bashforth(self, current, fn_arr):
-	# 	# note that array is newest to the right, oldest left
-	# 	fn, fn_1 = fn_arr[-1], fn_arr[-2]
-	# 	v = current + (1/2) * self.delta_t * (3*fn - 1*fn_1)
-	# 	return v
-
-	def sensitivity_bashford(self, iterations_video=False, double_type=True):
+	def sensitivity_bashforth(self, iterations_video=False, double_type=True):
 		"""
 		Determine the sensitivity to initial values per starting point of planet 1, as
 		measured by the time until divergence.
@@ -340,9 +278,9 @@ class Threebody:
 			dv3_prime_arr.append(dv3_prime)
 
 			if i >= 4:
-				nv1 = self.adam_bashforth(self.v1, dv1_arr)
-				nv2 = self.adam_bashforth(self.v2, dv2_arr)
-				nv3 = self.adam_bashforth(self.v3, dv3_arr)
+				nv1 = self.adams_bashforth(self.v1, dv1_arr)
+				nv2 = self.adams_bashforth(self.v2, dv2_arr)
+				nv3 = self.adams_bashforth(self.v3, dv3_arr)
 				dv1_arr.popleft(), dv2_arr.popleft(), dv3_arr.popleft()
 			else:
 				nv1 = self.v1 + dv1 * delta_t
@@ -350,9 +288,9 @@ class Threebody:
 				nv3 = self.v3 + dv3 * delta_t
 
 			if i >= 4:
-				self.p1 = self.adam_bashforth(self.p1, v1_arr)
-				self.p2 = self.adam_bashforth(self.p2, v2_arr)
-				self.p3 = self.adam_bashforth(self.p3, v3_arr)
+				self.p1 = self.adams_bashforth(self.p1, v1_arr)
+				self.p2 = self.adams_bashforth(self.p2, v2_arr)
+				self.p3 = self.adams_bashforth(self.p3, v3_arr)
 				v1_arr.popleft(), v2_arr.popleft(), v3_arr.popleft()
 			else:
 				self.p1 = self.p1 + self.v1 * delta_t
@@ -365,9 +303,9 @@ class Threebody:
 			v3_arr.append(self.v3)
 
 			if i >= 4:
-				nv1_prime = self.adam_bashforth(self.v1_prime, dv1_prime_arr)
-				nv2_prime = self.adam_bashforth(self.v2_prime, dv2_prime_arr)
-				nv3_prime = self.adam_bashforth(self.v3_prime, dv3_prime_arr)
+				nv1_prime = self.adams_bashforth(self.v1_prime, dv1_prime_arr)
+				nv2_prime = self.adams_bashforth(self.v2_prime, dv2_prime_arr)
+				nv3_prime = self.adams_bashforth(self.v3_prime, dv3_prime_arr)
 
 				dv1_prime_arr.popleft(), dv2_prime_arr.popleft(), dv3_prime_arr.popleft()
 			else:
@@ -376,9 +314,9 @@ class Threebody:
 				nv3_prime = self.v3_prime + dv3_prime * delta_t
 
 			if i >= 4:
-				self.p1_prime = self.adam_bashforth(self.p1_prime, v1_prime_arr)
-				self.p2_prime = self.adam_bashforth(self.p2_prime, v2_prime_arr)
-				self.p3_prime = self.adam_bashforth(self.p3_prime, v3_prime_arr)
+				self.p1_prime = self.adams_bashforth(self.p1_prime, v1_prime_arr)
+				self.p2_prime = self.adams_bashforth(self.p2_prime, v2_prime_arr)
+				self.p3_prime = self.adams_bashforth(self.p3_prime, v3_prime_arr)
 				v1_prime_arr.popleft(), v2_prime_arr.popleft(), v3_prime_arr.popleft()
 			else:
 				self.p1_prime = self.p1_prime + self.v1_prime * delta_t
@@ -392,164 +330,16 @@ class Threebody:
 
 		return time_array
 
-
-	def three_body_phase(self):
-		"""
-		Plot the phase of three bodies according to Newtonian mechanics
-
-		Args:
-			None
-
-		Returns:
-			None (saves matplotlib.pyplot object image)
-
-		"""
-
-		# starting coordinates for planets
-		# p1_start = x_1, y_1, z_1
-		p1_start = np.array([-10, 10, -11])
-		v1_start = np.array([-3, 0, 0])
-
-		# p2_start = x_2, y_2, z_2
-		p2_start = np.array([0, 0, 0])
-		v2_start = np.array([0, 0, 0])
-
-		# p3_start = x_3, y_3, z_3
-		p3_start = np.array([10, 10, 12])
-		v3_start = np.array([3, 0, 0])
-
-		# starting coordinates for planets shifted
-		# p1_start = x_1, y_1, z_1
-		p1_start_prime = np.array([-9.999, 10.001, -10.999])
-		v1_start_prime = np.array([-3, 0, 0])
-
-		# p2_start = x_2, y_2, z_2
-		p2_start_prime = np.array([0, 0, 0])
-		v2_start_prime = np.array([0, 0, 0])
-
-		# p3_start = x_3, y_3, z_3
-		p3_start_prime = np.array([10, 10, 12])
-		v3_start_prime = np.array([3, 0, 0])
-
-		# parameters
-		delta_t = self.delta_t
-		steps = self.time_steps
-
-		# initialize solution array
-		p1 = np.array([[0.,0.,0.] for i in range(steps)])
-		v1 = np.array([[0.,0.,0.] for i in range(steps)])
-
-		p2 = np.array([[0.,0.,0.] for j in range(steps)])
-		v2 = np.array([[0.,0.,0.] for j in range(steps)])
-
-		p3 = np.array([[0.,0.,0.] for k in range(steps)])
-		v3 = np.array([[0.,0.,0.] for k in range(steps)])
-
-
-		p1_prime = np.array([[0.,0.,0.] for i in range(steps)])
-		v1_prime = np.array([[0.,0.,0.] for i in range(steps)])
-
-		p2_prime = np.array([[0.,0.,0.] for j in range(steps)])
-		v2_prime = np.array([[0.,0.,0.] for j in range(steps)])
-
-		p3_prime = np.array([[0.,0.,0.] for k in range(steps)])
-		v3_prime = np.array([[0.,0.,0.] for k in range(steps)])
-
-		# starting point
-		p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
-		v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
-
-		p1_prime[0], p2_prime[0], p3_prime[0] = p1_start_prime, p2_start_prime, p3_start_prime
-		v1_prime[0], v2_prime[0], v3_prime[0] = v1_start_prime, v2_start_prime, v3_start_prime
-		time = [0]
-
-		# evolution of the system
-		for i in range(steps-1):
-			time.append(i)
-			#calculate derivatives
-			dv1, dv2, dv3 = self.optimized_accelerations(p1[i], p2[i], p3[i])
-			dv1_prime, dv2_prime, dv3_prime = self.optimized_accelerations(p1_prime[i], p2_prime[i], p3_prime[i])
-
-			v1[i + 1] = v1[i] + dv1 * delta_t
-			v2[i + 1] = v2[i] + dv2 * delta_t
-			v3[i + 1] = v3[i] + dv3 * delta_t
-
-			p1[i + 1] = p1[i] + v1[i] * delta_t
-			p2[i + 1] = p2[i] + v2[i] * delta_t
-			p3[i + 1] = p3[i] + v3[i] * delta_t
-
-			v1_prime[i + 1] = v1_prime[i] + dv1_prime * delta_t
-			v2_prime[i + 1] = v2_prime[i] + dv2_prime * delta_t
-			v3_prime[i + 1] = v3_prime[i] + dv3_prime * delta_t
-
-			p1_prime[i + 1] = p1_prime[i] + v1_prime[i] * delta_t
-			p2_prime[i + 1] = p2_prime[i] + v2_prime[i] * delta_t
-			p3_prime[i + 1] = p3_prime[i] + v3_prime[i] * delta_t
-
-			if i % 1000 == 0:
-				fig = plt.figure(figsize=(10, 10))
-				ax = fig.gca(projection='3d')
-				plt.gca().patch.set_facecolor('black')
-				ax.set_xlim([-50, 300])
-				ax.set_ylim([-10, 30])
-				ax.set_zlim([-30, 70])
-
-				plt.plot([i[0] for i in p1], [j[1] for j in p1], [k[2] for k in p1] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
-				plt.plot([i[0] for i in p2], [j[1] for j in p2], [k[2] for k in p2] , '^', color='white', lw = 0.05, markersize = 0.01, alpha=0.5)
-				plt.plot([i[0] for i in p3], [j[1] for j in p3], [k[2] for k in p3] , '^', color='blue', lw = 0.05, markersize = 0.01, alpha=0.5)
-				plt.plot([i[0] for i in p1_prime], [j[1] for j in p1_prime], [k[2] for k in p1_prime], '^', color='yellow', lw=0.05, markersize=0.01, alpha=0.5)
-
-				plt.axis('on')
-
-				# optional: use if reference axes skeleton is desired,
-				# ie plt.axis is set to 'on'
-				ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
-
-				# make panes have the same color as background
-				ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
-				ax.view_init(elev = 20, azim = i//1000)
-				plt.savefig('{}'.format(i//1000), bbox_inches='tight', dpi=300)
-				plt.close()
-
-
-		fig = plt.figure(figsize=(10, 10))
-		ax = fig.gca(projection='3d')
-		plt.gca().patch.set_facecolor('black')
-		plt.plot([i[0] for i in p1], [j[1] for j in p1], [k[2] for k in p1] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[0] for i in p1_prime], [j[1] for j in p1_prime], [k[2] for k in p1_prime] , '^', color='white', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[0] for i in p1], [j[1] for j in p1], [k[2] for k in p1] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[0] for i in p2], [j[1] for j in p2], [k[2] for k in p2] , '^', color='white', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[0] for i in p3], [j[1] for j in p3], [k[2] for k in p3] , '^', color='blue', lw = 0.05, markersize = 0.01, alpha=0.5)
-
-
-		plt.plot([i[0] for i in p1], [j[1] for j in p1], [k[2] for k in p1] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[1] for i in p2], [np.sqrt(j[0]**2 + j[1]**2 + j[2]**2) for j in v2], ',', color='red', lw = 0.05, markersize = 0.01, alpha=0.8)
-		plt.plot([i[0] for i in p3], [j[1] for j in p3], [k[2] for k in p3] , '^', color='blue', lw = 0.05, markersize = 0.01, alpha=0.5)
-		plt.plot([i[0] for i in p2_prime], [j[1] for j in p2_prime], [k[2] for k in p2_prime], '^', color='blue', lw=0.05, markersize=0.01, alpha=0.5)
-		plt.plot([i[1] for i in p2_prime], [np.sqrt(j[0]**2 + j[1]**2 + j[2]**2) for j in v2_prime], ',', color='blue', lw = 0.05, markersize = 0.01, alpha=0.8)
-
-		plt.axis('on')
-
-		# optional: use if reference axes skeleton is desired,
-		# ie plt.axis is set to 'on'
-		ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
-
-		# make panes have the same color as background
-		ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
-		ax.view_init(elev = 20, azim = t)
-		plt.savefig('{}'.format(t), dpi=300, bbox_inches='tight')
-		plt.show()
-		plt.close()
-
   
 for i in range(1):
-	time_steps = 90000
-	x_res, y_res = 300, 300
+	time_steps = 8000
+	x_res, y_res = 500, 500
 	offset = -11
 	mass = 30
 	# print (f'Offset: {offset}')
 	t = Threebody(time_steps, x_res, y_res, offset, mass)
-	time_array = t.sensitivity(iterations_video=False, double_type=True)
+	time_array = t.sensitivity_bashforth(iterations_video=False, double_type=True)
+	# t.three_body_trajectory()
 	time_array = time_steps - time_array
 	time_array = time_array.cpu().numpy()
 	plt.style.use('dark_background')
@@ -560,30 +350,6 @@ for i in range(1):
 	plt.close()
  
 
-# time_steps = 50000
-# x_res, y_res = 1000, 1000
-# offset = -11
-# mass = 30
-# # print (f'Offset: {offset}')
-# t = Threebody(time_steps, x_res, y_res, offset, mass)
-# time_array = t.sensitivity(iterations_video=False, double_type=False)
-# # t.three_body_trajectory()
-# time_array_d = time_steps - time_array
-
-# time_steps = 20000
-# x_res, y_res = 300, 300
-# offset = -11
-# mass = 30
-# # print (f'Offset: {offset}')
-# t2 = Threebody(time_steps, x_res, y_res, offset, mass)
-# time_array = t2.sensitivity(iterations_video=False, double_type=False)
-# # t.three_body_trajectory()
-# time_array_f = time_steps - time_array
-
-# mask = time_array_d != time_array_f
-# mask = mask.reshape([1, 300, 300])
-# print (t2.p1[1:2][mask])
-# print (t2.p1_prime[1:2][mask])
 
 
  
