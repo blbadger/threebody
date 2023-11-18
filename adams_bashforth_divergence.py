@@ -35,7 +35,7 @@ class Threebody:
 		self.z_offset = z_offset
 
 		# assign a small number to each time step
-		self.delta_t = 0.01
+		self.delta_t = 0.0001
 		self.exponent = exponent
 
 
@@ -130,7 +130,7 @@ class Threebody:
 		plt.close()
 		return
 
-	def initialize_arrays(self, xrange=0.001, yrange=0.001, x_center=0.8, y_center=0, double_type=True, shift=1e-8):
+	def initialize_arrays(self, xrange=0.001, yrange=0.001, x_center=0.8, y_center=0, double_type=True, shift=1e-7):
 		"""
 		Initialize torch.Tensor arrays
 
@@ -205,7 +205,10 @@ class Threebody:
 		elif order == 2:
 			# note that array is newest to the right, oldest left
 			fn, fn_1 = fn_arr[-1], fn_arr[-2]
-			v = current + (1/2) * self.delta_t * (2.1*fn - 1.9*fn_1)
+			v = current + (1/2) * self.delta_t * (3*fn - 1*fn_1)
+
+		elif order == 1:
+			v = current + self.delta_t * fn_arr[-1]
 
 		return v
 
@@ -316,8 +319,8 @@ class Threebody:
 
   
 for i in range(1):
-	time_steps = 14000
-	x_res, y_res = 500, 500
+	time_steps = 100000
+	x_res, y_res = 300, 300
 	offset = -11
 	mass = 30
 	t = Threebody(time_steps, x_res, y_res, offset, mass)
