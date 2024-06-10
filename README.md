@@ -11,6 +11,8 @@ in the general case for two but not three or more bodies.
 
 For further speedups via direct CUDA implementation, `divergence.cu` provides an optimized CUDA kernal with C++ driver code to simulate three body divergence. `divergence_kernal.cu` and `divergence_transfer.py` implement a `ctypes`-based pointer transfer to drive an optimized CUDA kernal with python, followed by retrieval and Matplotlib-based plotting of the computed array.
 
+If you have multiple GPUs, `distributed_divergence.cu` provides a CUDA kernal and driver code that performs integration simultaneously on your devices, such that with N devices you can expect the time taken to be 1/N times the time taken for one. 
+
 ![3body](https://blbadger.github.io/3_body_problem/3_body_shifted_1.png)
 
 ![divergence](https://blbadger.github.io/3_body_problem/Threebody_divergence_xy.png)
