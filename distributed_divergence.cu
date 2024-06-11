@@ -220,7 +220,9 @@ int main(void)
   bool *still_together, *d_still_together;
   int *times, *d_times;
   bool *not_diverged, *d_not_diverged;
-  int n_gpus = 2;
+  int n_gpus;
+  cudaGetDeviceCount(&n_gpus);
+  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.";
 
   cudaHostAlloc((void**)&p1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
   cudaHostAlloc((void**)&p1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
@@ -382,12 +384,8 @@ int main(void)
     not_diverged[i] = true;
   }
 
-  // launch one thread per GPU
-  // std::vector<std::thread> threads;
-  #pragma omp parallel for
+  // launch GPUs using one thread
   for (int i=0; i<n_gpus; i++){
-    // threads.push_back(std::thread([&,i](){
-
     std::cout << "GPU number " << i << " initialized" << "\n";
     // assumes that n_gpus divides N with no remainder, which is safe as N is a large square.
     int start_idx = (N/n_gpus)*i;
@@ -596,10 +594,9 @@ int main(void)
     cudaMemcpy(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice);
     cudaMemcpy(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice);
 
-
     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx>>>>
-    divergence<<<(N+127)/128, 128>>>(
-        N, 
+    divergence<<<(block_n+127)/128, 128>>>(
+        block_n, 
         steps, 
         delta_t,
         d_still_together,

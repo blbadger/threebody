@@ -220,7 +220,9 @@ int main(void)
   bool *still_together, *d_still_together;
   int *times, *d_times;
   bool *not_diverged, *d_not_diverged;
-  int n_gpus = 2;
+  int n_gpus;
+  cudaGetDeviceCount(&n_gpus);
+  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.";
 
   cudaHostAlloc((void**)&p1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
   cudaHostAlloc((void**)&p1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
@@ -598,8 +600,8 @@ int main(void)
 
 
     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx>>>>
-    divergence<<<(N+127)/128, 128>>>(
-        N, 
+    divergence<<<(block_n+127)/128, 128>>>(
+        block_n, 
         steps, 
         delta_t,
         d_still_together,
@@ -645,7 +647,7 @@ int main(void)
     cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
     }
-    
+
   cudaDeviceSynchronize();
   // check computation for completion and accuracy
   for (int k=0; k<2; k++) {
