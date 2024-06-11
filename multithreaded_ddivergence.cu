@@ -643,10 +643,10 @@ int main(void)
     cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
     }
-
+    
   cudaDeviceSynchronize();
-  
   // check computation for completion and accuracy
   for (int k=0; k<2; k++) {
     std::cout << times[k] << ' ';
@@ -660,39 +660,39 @@ int main(void)
     std::cout << p1_prime_z[k] << ' ';
     std::cout << '\n';
   
-  cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
-  cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);
-  cudaFree(d_p3_x); cudaFree(d_p3_y); cudaFree(d_p3_z);
+  // cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
+  // cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);
+  // cudaFree(d_p3_x); cudaFree(d_p3_y); cudaFree(d_p3_z);
 
-  cudaFree(d_p1_prime_x); cudaFree(d_p1_prime_y); cudaFree(d_p1_prime_z);  
-  cudaFree(d_p2_prime_x); cudaFree(d_p2_prime_y); cudaFree(d_p2_prime_z);
-  cudaFree(d_p3_prime_x); cudaFree(d_p3_prime_y); cudaFree(d_p3_prime_z);
+  // cudaFree(d_p1_prime_x); cudaFree(d_p1_prime_y); cudaFree(d_p1_prime_z);  
+  // cudaFree(d_p2_prime_x); cudaFree(d_p2_prime_y); cudaFree(d_p2_prime_z);
+  // cudaFree(d_p3_prime_x); cudaFree(d_p3_prime_y); cudaFree(d_p3_prime_z);
 
-  cudaFree(d_dv_1_x); cudaFree(d_dv_1_y); cudaFree(d_dv_1_z);
-  cudaFree(d_dv_2_x); cudaFree(d_dv_2_y); cudaFree(d_dv_2_z);
-  cudaFree(d_dv_3_x); cudaFree(d_dv_3_y); cudaFree(d_dv_3_z);
+  // cudaFree(d_dv_1_x); cudaFree(d_dv_1_y); cudaFree(d_dv_1_z);
+  // cudaFree(d_dv_2_x); cudaFree(d_dv_2_y); cudaFree(d_dv_2_z);
+  // cudaFree(d_dv_3_x); cudaFree(d_dv_3_y); cudaFree(d_dv_3_z);
 
-  cudaFree(d_dv_1pr_x); cudaFree(d_dv_1pr_y); cudaFree(d_dv_1pr_z);
-  cudaFree(d_dv_2pr_x); cudaFree(d_dv_2pr_y); cudaFree(d_dv_2pr_z);
-  cudaFree(d_dv_3pr_x); cudaFree(d_dv_3pr_y); cudaFree(d_dv_3pr_z);
+  // cudaFree(d_dv_1pr_x); cudaFree(d_dv_1pr_y); cudaFree(d_dv_1pr_z);
+  // cudaFree(d_dv_2pr_x); cudaFree(d_dv_2pr_y); cudaFree(d_dv_2pr_z);
+  // cudaFree(d_dv_3pr_x); cudaFree(d_dv_3pr_y); cudaFree(d_dv_3pr_z);
 
-  cudaFree(d_nv1_x); cudaFree(d_nv1_y); cudaFree(d_nv1_z);
-  cudaFree(d_nv2_x); cudaFree(d_nv2_y); cudaFree(d_nv2_z);
-  cudaFree(d_nv3_x); cudaFree(d_nv3_y); cudaFree(d_nv3_z);
+  // cudaFree(d_nv1_x); cudaFree(d_nv1_y); cudaFree(d_nv1_z);
+  // cudaFree(d_nv2_x); cudaFree(d_nv2_y); cudaFree(d_nv2_z);
+  // cudaFree(d_nv3_x); cudaFree(d_nv3_y); cudaFree(d_nv3_z);
 
-  cudaFree(d_v1_x); cudaFree(d_v1_y); cudaFree(d_v1_z);
-  cudaFree(d_v2_x); cudaFree(d_v2_y); cudaFree(d_v2_z);
-  cudaFree(d_v3_x); cudaFree(d_v3_y); cudaFree(d_v3_z);
+  // cudaFree(d_v1_x); cudaFree(d_v1_y); cudaFree(d_v1_z);
+  // cudaFree(d_v2_x); cudaFree(d_v2_y); cudaFree(d_v2_z);
+  // cudaFree(d_v3_x); cudaFree(d_v3_y); cudaFree(d_v3_z);
 
-  cudaFree(d_v1_prime_x); cudaFree(d_v1_prime_y); cudaFree(d_v1_prime_z);
-  cudaFree(d_v2_prime_x); cudaFree(d_v2_prime_y); cudaFree(d_v2_prime_z);
-  cudaFree(d_v3_prime_x); cudaFree(d_v3_prime_y); cudaFree(d_v3_prime_z);
+  // cudaFree(d_v1_prime_x); cudaFree(d_v1_prime_y); cudaFree(d_v1_prime_z);
+  // cudaFree(d_v2_prime_x); cudaFree(d_v2_prime_y); cudaFree(d_v2_prime_z);
+  // cudaFree(d_v3_prime_x); cudaFree(d_v3_prime_y); cudaFree(d_v3_prime_z);
 
-  cudaFree(d_nv1_prime_x); cudaFree(d_nv1_prime_y); cudaFree(d_nv1_prime_z);
-  cudaFree(d_nv2_prime_x); cudaFree(d_nv2_prime_y); cudaFree(d_nv2_prime_z);
-  cudaFree(d_nv3_prime_x); cudaFree(d_nv3_prime_y); cudaFree(d_nv3_prime_z);
+  // cudaFree(d_nv1_prime_x); cudaFree(d_nv1_prime_y); cudaFree(d_nv1_prime_z);
+  // cudaFree(d_nv2_prime_x); cudaFree(d_nv2_prime_y); cudaFree(d_nv2_prime_z);
+  // cudaFree(d_nv3_prime_x); cudaFree(d_nv3_prime_y); cudaFree(d_nv3_prime_z);
 
-  cudaFree(d_times); cudaFree(d_still_together); cudaFree(d_not_diverged);
+  // cudaFree(d_times); cudaFree(d_still_together); cudaFree(d_not_diverged);
 
   // free(p1_x); free(p1_y); free(p1_z);
   // free(p2_x); free(p2_y); free(p2_z);
@@ -734,8 +734,8 @@ int main(void)
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
   }
-}
 
+}
 
 
 
