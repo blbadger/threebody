@@ -385,18 +385,18 @@ int main(void)
   }
 
   // launch one thread per GPU
-  // std::vector<std::thread> threads;
+  cudaStream_t streams[n_gpus];
   #pragma omp parallel for
   for (int i=0; i<n_gpus; i++){
-    // threads.push_back(std::thread([&,i](){
-
     std::cout << "GPU number " << i << " initialized" << "\n";
+
     // assumes that n_gpus divides N with no remainder, which is safe as N is a large square.
     int start_idx = (N/n_gpus)*i;
     int end_idx = start_idx + N/n_gpus;
     std::cout << "Start index: " << start_idx << "\nEnd index: " << end_idx << "\n";
     int block_n = N/n_gpus;
     cudaSetDevice(i);
+    cudaStreamCreate(&streams[i]);
 
     cudaMalloc(&d_p1_x, block_n*sizeof(double)); 
     cudaMalloc(&d_p1_y, block_n*sizeof(double)); 
@@ -600,7 +600,7 @@ int main(void)
 
 
     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx>>>>
-    divergence<<<(block_n+127)/128, 128>>>(
+    divergence<<<(block_n+127)/128, 128, 0, streams[i]>>>(
         block_n, 
         steps, 
         delta_t,
@@ -646,6 +646,7 @@ int main(void)
     cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
+
     }
 
   cudaDeviceSynchronize();
