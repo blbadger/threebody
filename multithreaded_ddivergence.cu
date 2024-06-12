@@ -498,105 +498,105 @@ int main(void)
     cudaMalloc(&d_times, block_n*sizeof(int));
     cudaMalloc(&d_not_diverged, block_n*sizeof(bool));
 
-    cudaMemcpy(d_p1_x, p1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p1_y, p1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p1_z, p1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p1_x, p1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1_y, p1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1_z, p1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_p2_x, p2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p2_y, p2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p2_z, p2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p2_x, p2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2_y, p2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2_z, p2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_p3_x, p3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p3_y, p3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p3_z, p3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p3_x, p3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3_y, p3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3_z, p3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_p1_prime_x, p1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p1_prime_y, p1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p1_prime_z, p1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p1_prime_x, p1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1_prime_y, p1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1_prime_z, p1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_p2_prime_x, p2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p2_prime_y, p2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p2_prime_z, p2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p2_prime_x, p2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2_prime_y, p2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2_prime_z, p2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_p3_prime_x, p3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p3_prime_y, p3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_p3_prime_z, p3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_p3_prime_x, p3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3_prime_y, p3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3_prime_z, p3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_1_x, dv_1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_1_y, dv_1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_1_z, dv_1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_1_x, dv_1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1_y, dv_1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1_z, dv_1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_2_x, dv_2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_2_y, dv_2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_2_z, dv_2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_2_x, dv_2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2_y, dv_2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2_z, dv_2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_3_x, dv_3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_3_y, dv_3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_3_z, dv_3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_3_x, dv_3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3_y, dv_3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3_z, dv_3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_1pr_x, dv_1pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_1pr_y, dv_1pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_1pr_z, dv_1pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_1pr_x, dv_1pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1pr_y, dv_1pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1pr_z, dv_1pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_2pr_x, dv_2pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_2pr_y, dv_2pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_2pr_z, dv_2pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_2pr_x, dv_2pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2pr_y, dv_2pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2pr_z, dv_2pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_dv_3pr_x, dv_3pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_3pr_y, dv_3pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_dv_3pr_z, dv_3pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_dv_3pr_x, dv_3pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3pr_y, dv_3pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3pr_z, dv_3pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v1_x, v1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v1_y, v1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v1_z, v1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v1_x, v1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1_y, v1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1_z, v1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v2_x, v2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v2_y, v2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v2_z, v2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v2_x, v2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2_y, v2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2_z, v2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v3_x, v3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v3_y, v3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v3_z, v3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v3_x, v3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3_y, v3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3_z, v3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v1_prime_x, v1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v1_prime_y, v1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v1_prime_z, v1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v1_prime_x, v1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1_prime_y, v1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1_prime_z, v1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v2_prime_x, v2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v2_prime_y, v2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v2_prime_z, v2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v2_prime_x, v2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2_prime_y, v2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2_prime_z, v2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_v3_prime_x, v3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v3_prime_y, v3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_v3_prime_z, v3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_v3_prime_x, v3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3_prime_y, v3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3_prime_z, v3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv1_x, nv1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv1_y, nv1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv1_z, nv1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv1_x, nv1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1_y, nv1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1_z, nv1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv2_x, nv2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv2_y, nv2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv2_z, nv2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv2_x, nv2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2_y, nv2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2_z, nv2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv3_x, nv3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv3_y, nv3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv3_z, nv3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv3_x, nv3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3_y, nv3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3_z, nv3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv1_prime_x, nv1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv1_prime_y, nv1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv1_prime_z, nv1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv1_prime_x, nv1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1_prime_y, nv1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1_prime_z, nv1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv2_prime_x, nv2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv2_prime_y, nv2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv2_prime_z, nv2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv2_prime_x, nv2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2_prime_y, nv2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2_prime_z, nv2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_nv3_prime_x, nv3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv3_prime_y, nv3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nv3_prime_z, nv3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_nv3_prime_x, nv3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3_prime_y, nv3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3_prime_z, nv3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpy(d_times, times+start_idx, block_n*sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(d_times, times+start_idx, block_n*sizeof(int), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
 
 
     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
@@ -645,6 +645,7 @@ int main(void)
     cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
+    cudaStreamSynchronize(streams[d]);
     cudaDeviceSynchronize();
     }
 
