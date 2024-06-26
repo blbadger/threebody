@@ -5,6 +5,20 @@
 #include <thread>
 #include <vector>
 
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+
+__global__
+void saxpy(int n, float a, float *x)
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  for (int j=0; j < 10000000; j++){
+    if (i < n) {
+      x[i] += 1;
+    }
+  }
+}
+
 // kernal declaration
 __global__
 void divergence(int n, 
@@ -15,30 +29,14 @@ void divergence(int n,
               int *times,
               double m_1, double m_2, double m_3,
               double critical_distance,
-              double *p1_x, double *p1_y, double *p1_z, 
-              double *p2_x, double *p2_y, double *p2_z, 
-              double *p3_x, double *p3_y, double *p3_z, 
-              double *p1_prime_x, double *p1_prime_y, double *p1_prime_z, 
-              double *p2_prime_x, double *p2_prime_y, double *p2_prime_z, 
-              double *p3_prime_x, double *p3_prime_y, double *p3_prime_z, 
-              double *dv_1_x, double *dv_1_y, double *dv_1_z,
-              double *dv_2_x, double *dv_2_y, double *dv_2_z,
-              double *dv_3_x, double *dv_3_y, double *dv_3_z,
-              double *dv_1pr_x, double *dv_1pr_y, double *dv_1pr_z,
-              double *dv_2pr_x, double *dv_2pr_y, double *dv_2pr_z,
-              double *dv_3pr_x, double *dv_3pr_y, double *dv_3pr_z,
-              double *v1_x, double *v1_y, double *v1_z,
-              double *v2_x, double *v2_y, double *v2_z,
-              double *v3_x, double *v3_y, double *v3_z,
-              double *v1_prime_x, double *v1_prime_y, double *v1_prime_z,
-              double *v2_prime_x, double *v2_prime_y, double *v2_prime_z,
-              double *v3_prime_x, double *v3_prime_y, double *v3_prime_z,
-              double *nv1_x, double *nv1_y, double *nv1_z,
-              double *nv2_x, double *nv2_y, double *nv2_z,
-              double *nv3_x, double *nv3_y, double *nv3_z,
-              double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
-              double *nv2_prime_x, double *nv2_prime_y, double *nv2_prime_z,
-              double *nv3_prime_x, double *nv3_prime_y, double *nv3_prime_z
+              double *p1, double *p2, double *p3,
+              double *p1_prime_x, double *p2_prime, double *p3_prime, 
+              double *dv_1, double *dv_2, double *dv_3,
+              double *dv_1pr, double *dv_2pr, double *dv_2pr,
+              double *v1, double *v2, double *v3,
+              double *v1_prime, double *v2_prime, double *v3_prime,
+              double *nv1, double *nv2, double *nv3,
+              double *nv1_prime, double *nv2_prime, double *nv3_prime
               )
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
@@ -167,158 +165,62 @@ int main(void)
   double m1 = 10.;
   double m2 = 20.;
   double m3 = 30.;
-  double *p1_x, *p1_y, *p1_z;
-  double *p2_x, *p2_y, *p2_z;
-  double *p3_x, *p3_y, *p3_z;
+  double *p1, *p2, *p3;
   double *p1_prime_x, *p1_prime_y, *p1_prime_z;
-  double *p2_prime_x, *p2_prime_y, *p2_prime_z;
-  double *p3_prime_x, *p3_prime_y, *p3_prime_z;
-  double *dv_1_x, *dv_1_y, *dv_1_z;
-  double *dv_2_x, *dv_2_y, *dv_2_z;
-  double *dv_3_x, *dv_3_y, *dv_3_z;
-  double *dv_1pr_x, *dv_1pr_y, *dv_1pr_z;
-  double *dv_2pr_x, *dv_2pr_y, *dv_2pr_z;
-  double *dv_3pr_x, *dv_3pr_y, *dv_3pr_z;
+  double *dv_1, *dv_2, *dv_3;
+  double *dv_1pr, *dv_2pr, *dv_3pr;
   double *v1_x, *v1_y, *v1_z;
-  double *v2_x, *v2_y, *v2_z;
-  double *v3_x, *v3_y, *v3_z;
-  double *v1_prime_x, *v1_prime_y, *v1_prime_z;
-  double *v2_prime_x, *v2_prime_y, *v2_prime_z;
-  double *v3_prime_x, *v3_prime_y, *v3_prime_z;
-  double *nv1_x, *nv1_y, *nv1_z;
-  double *nv2_x, *nv2_y, *nv2_z;
-  double *nv3_x, *nv3_y, *nv3_z;
-  double *nv1_prime_x, *nv1_prime_y, *nv1_prime_z;
-  double *nv2_prime_x, *nv2_prime_y, *nv2_prime_z;
-  double *nv3_prime_x, *nv3_prime_y, *nv3_prime_z;
+  double *v1_prime, *v2_prime, *v3_prime;
+  double *nv1, *nv2, *nv3;
+  double *nv1_prime, *nv2_prime, *nv3_prime;
 
-  double *d_p1_x, *d_p1_y, *d_p1_z;
-  double *d_p2_x, *d_p2_y, *d_p2_z;
-  double *d_p3_x, *d_p3_y, *d_p3_z;
-  double *d_p1_prime_x, *d_p1_prime_y, *d_p1_prime_z;
-  double *d_p2_prime_x, *d_p2_prime_y, *d_p2_prime_z;
-  double *d_p3_prime_x, *d_p3_prime_y, *d_p3_prime_z;
-  double *d_dv_1_x, *d_dv_1_y, *d_dv_1_z;
-  double *d_dv_2_x, *d_dv_2_y, *d_dv_2_z;
-  double *d_dv_3_x, *d_dv_3_y, *d_dv_3_z;
-  double *d_dv_1pr_x, *d_dv_1pr_y, *d_dv_1pr_z;
-  double *d_dv_2pr_x, *d_dv_2pr_y, *d_dv_2pr_z;
-  double *d_dv_3pr_x, *d_dv_3pr_y, *d_dv_3pr_z;
-  double *d_v1_x, *d_v1_y, *d_v1_z;
-  double *d_v2_x, *d_v2_y, *d_v2_z;
-  double *d_v3_x, *d_v3_y, *d_v3_z;
-  double *d_v1_prime_x, *d_v1_prime_y, *d_v1_prime_z;
-  double *d_v2_prime_x, *d_v2_prime_y, *d_v2_prime_z;
-  double *d_v3_prime_x, *d_v3_prime_y, *d_v3_prime_z;
-  double *d_nv1_x, *d_nv1_y, *d_nv1_z;
-  double *d_nv2_x, *d_nv2_y, *d_nv2_z;
-  double *d_nv3_x, *d_nv3_y, *d_nv3_z;
-  double *d_nv1_prime_x, *d_nv1_prime_y, *d_nv1_prime_z;
-  double *d_nv2_prime_x, *d_nv2_prime_y, *d_nv2_prime_z;
-  double *d_nv3_prime_x, *d_nv3_prime_y, *d_nv3_prime_z;
+  double *d_p1, *d_p2, *d_p3;
+  double *d_p1_prime, *d_p2_prime, *d_p3_prime;
+  double *d_dv_1, *d_dv_2, *d_dv_3;
+  double *d_dv_1pr, *d_dv_2pr, *d_dv_3pr;
+  double *d_v1, *d_v2, *d_v3;
+  double *d_v1_prime, *d_v2_prime, *d_v3_prime;
+  double *d_nv1, *d_nv2, *d_nv3;
+  double *d_nv1_prime, *d_nv2_prime, *d_nv3_prime;
 
   bool *still_together, *d_still_together;
   int *times, *d_times;
   bool *not_diverged, *d_not_diverged;
-  int n_gpus;
+
   cudaGetDeviceCount(&n_gpus);
-  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.";
+  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.\n";
 
-  cudaHostAlloc((void**)&p1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p1_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p1, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p2, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p3, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&p2_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p2_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p2_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p1_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p2_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&p3_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&p3_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p3_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p3_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_1, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_2, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_3, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&p1_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p1_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p1_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_1pr, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_2pr, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&dv_3pr, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&p2_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p2_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p2_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&v1, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&v2, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&v3, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&p3_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p3_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&p3_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&v1_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
+  cudaHostAlloc((void**)&v2_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
+  cudaHostAlloc((void**)&v3_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
 
-  cudaHostAlloc((void**)&dv_1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_1_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv1, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv2, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv3, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
-  cudaHostAlloc((void**)&dv_2_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_2_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_2_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&dv_3_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_3_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_3_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&dv_1pr_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_1pr_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_1pr_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&dv_2pr_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_2pr_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_2pr_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&dv_3pr_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_3pr_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&dv_3pr_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v1_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v2_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v2_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v2_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v3_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v3_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v3_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v1_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
-  cudaHostAlloc((void**)&v1_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v1_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v2_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
-  cudaHostAlloc((void**)&v2_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v2_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&v3_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);  
-  cudaHostAlloc((void**)&v3_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&v3_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&nv1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv1_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&nv2_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv2_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv2_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&nv3_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv3_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv3_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&nv1_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv1_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv1_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  cudaHostAlloc((void**)&nv2_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv2_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv2_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  
-  cudaHostAlloc((void**)&nv3_prime_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv3_prime_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-  cudaHostAlloc((void**)&nv3_prime_z, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv1_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv2_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+  cudaHostAlloc((void**)&nv3_prime, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
 
   cudaHostAlloc((void**)&still_together, N*sizeof(bool), cudaHostAllocWriteCombined | cudaHostAllocMapped);
   cudaHostAlloc((void**)&not_diverged, N*sizeof(bool), cudaHostAllocWriteCombined | cudaHostAllocMapped);
@@ -384,23 +286,32 @@ int main(void)
     not_diverged[i] = true;
   }
 
+  float *x, *d_x;
+
+  int N = 10000000;
+  cudaHostAlloc((void**)&x, N*sizeof(float), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+
+  int n_gpus=4;
+  for (int i = 0; i < N/n_gpus; i++) {
+      x[i] = 1.0f;
+  }
+
   // launch one thread per GPU
   cudaStream_t streams[n_gpus];
-  #pragma omp parallel for
-  for (int d=0; d<n_gpus; d++){
-    std::cout << "GPU number " << d << " initialized" << "\n";
-
+  #pragma omp parallel num_threads(n_gpus)
+  {
+    int d = omp_get_thread_num();
     // assumes that n_gpus divides N with no remainder, which is safe as N is a large square.
     int start_idx = (N/n_gpus)*d;
     int end_idx = start_idx + N/n_gpus;
     std::cout << "Start index: " << start_idx << "\nEnd index: " << end_idx << "\n";
     int block_n = N/n_gpus;
-    cudaSetDevice(d);
+    cudaSetDevice(omp_get_thread_num());
     cudaStreamCreate(&streams[d]);
 
     cudaMalloc(&d_p1_x, block_n*sizeof(double)); 
     cudaMalloc(&d_p1_y, block_n*sizeof(double)); 
-    cudaMalloc(&d_p1_z, block_n*sizeof(double)); 
+    cudaMalloc(&d_p1_z, block_n*sizeof(double));
 
     cudaMalloc(&d_p2_x, block_n*sizeof(double));
     cudaMalloc(&d_p2_y, block_n*sizeof(double));
@@ -598,58 +509,54 @@ int main(void)
     cudaMemcpyAsync(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
     cudaMemcpyAsync(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
 
+    // // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
+    //  
+    //     block_n, 
+    //     steps, 
+    //     delta_t,
+    //     d_still_together,
+    //     d_not_diverged,
+    //     d_times,
+    //     m1, m2, m3,
+    //     critical_distance,
+    //     d_p1_x, d_p1_y, d_p1_z, 
+    //     d_p2_x, d_p2_y, d_p2_z, 
+    //     d_p3_x, d_p3_y, d_p3_z, 
+    //     d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
+    //     d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
+    //     d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
+    //     d_dv_1_x, d_dv_1_y, d_dv_1_z,
+    //     d_dv_2_x, d_dv_2_y, d_dv_2_z,
+    //     d_dv_3_x, d_dv_3_y, d_dv_3_z,
+    //     d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
+    //     d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
+    //     d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
+    //     d_v1_x, d_v1_y, d_v1_z,
+    //     d_v2_x, d_v2_y, d_v2_z,
+    //     d_v3_x, d_v3_y, d_v3_z,
+    //     d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
+    //     d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
+    //     d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
+    //     d_nv1_x, d_nv1_y, d_nv1_z,
+    //     d_nv2_x, d_nv2_y, d_nv2_z,
+    //     d_nv3_x, d_nv3_y, d_nv3_z,
+    //     d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
+    //     d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
+    //     d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
+    //     );
 
-    // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
-    divergence<<<(block_n+127)/128, 128, 0, streams[d]>>>(
-        block_n, 
-        steps, 
-        delta_t,
-        d_still_together,
-        d_not_diverged,
-        d_times,
-        m1, m2, m3,
-        critical_distance,
-        d_p1_x, d_p1_y, d_p1_z, 
-        d_p2_x, d_p2_y, d_p2_z, 
-        d_p3_x, d_p3_y, d_p3_z, 
-        d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
-        d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
-        d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
-        d_dv_1_x, d_dv_1_y, d_dv_1_z,
-        d_dv_2_x, d_dv_2_y, d_dv_2_z,
-        d_dv_3_x, d_dv_3_y, d_dv_3_z,
-        d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
-        d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
-        d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
-        d_v1_x, d_v1_y, d_v1_z,
-        d_v2_x, d_v2_y, d_v2_z,
-        d_v3_x, d_v3_y, d_v3_z,
-        d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
-        d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
-        d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
-        d_nv1_x, d_nv1_y, d_nv1_z,
-        d_nv2_x, d_nv2_y, d_nv2_z,
-        d_nv3_x, d_nv3_y, d_nv3_z,
-        d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
-        d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
-        d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
-        );
-
-
-    cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaStreamSynchronize(streams[d]);
-    cudaDeviceSynchronize();
+    // cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaDeviceSynchronize();
     }
 
-  cudaDeviceSynchronize();
   // check computation for completion and accuracy
   for (int k=0; k<2; k++) {
     std::cout << times[k] << ' ';
@@ -662,7 +569,10 @@ int main(void)
     std::cout << p1_prime_y[k] << ' ';
     std::cout << p1_prime_z[k] << ' ';
     std::cout << '\n';
-  
+ } 
+
+  cudaError_t err = cudaGetLastError();  // add
+  if (err != cudaSuccess) std::cout << "CUDA error: " << cudaGetErrorString(err) << std::endl; // add
   // cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
   // cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);
   // cudaFree(d_p3_x); cudaFree(d_p3_y); cudaFree(d_p3_z);
@@ -737,9 +647,4 @@ int main(void)
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
   }
-
-}
-
-
-
 
