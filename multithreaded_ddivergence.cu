@@ -44,125 +44,125 @@ void divergence(int n,
   for (int j=0; j < steps; j++) {
     if (i < n and still_together[i]){
       // compute accelerations
-      dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
-                  -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
-      dv_1_y[i] = -9.8 * m_2 * (p1_y[i] - p2_y[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
-                  -9.8 * m_3 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
-      dv_1_z[i] = -9.8 * m_2 * (p1_z[i] - p2_z[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
-                  -9.8 * m_3 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
-      dv_2_x[i] = -9.8 * m_3 * (p2_x[i] - p3_x[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
-                  -9.8 * m_1 * (p2_x[i] - p1_x[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
-      dv_2_y[i] = -9.8 * m_3 * (p2_y[i] - p3_y[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
-                  -9.8 * m_1 * (p2_y[i] - p1_y[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
-      dv_2_z[i] = -9.8 * m_3 * (p2_z[i] - p3_z[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
-                  -9.8 * m_1 * (p2_z[i] - p1_z[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
-      dv_3_x[i] = -9.8 * m_1 * (p3_x[i] - p1_x[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
-                  -9.8 * m_2 * (p3_x[i] - p2_x[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
-      dv_3_y[i] = -9.8 * m_1 * (p3_y[i] - p1_y[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
-                  -9.8 * m_2 * (p3_y[i] - p2_y[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
-      dv_3_z[i] = -9.8 * m_1 * (p3_z[i] - p1_z[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
-                  -9.8 * m_2 * (p3_z[i] - p2_z[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
+      dv_1[i] = -9.8 * m_2 * (p1[i] - p2[i]) / pow(sqrt(pow(p1[i] - p2[i], 2) + pow(p1[i+1] - p2[i+1], 2) + pow(p1[i+2] - p2[i+2], 2)), 3) \
+                  -9.8 * m_3 * (p1[i] - p3[i]) / pow(sqrt(pow(p1[i] - p3[i], 2) + pow(p1[i+1] - p3[i+1], 2) + pow(p1[i+2] - p3[i+2], 2)), 3);
+      dv_1[i+1] = -9.8 * m_2 * (p1[i+1] - p2[i+1]) / pow(sqrt(pow(p1[i] - p2[i], 2) + pow(p1[i+1] - p2[i+1], 2) + pow(p1[i+2] - p2[i+2], 2)), 3) \
+                  -9.8 * m_3 * (p1[i+1] - p3[i+1]) / pow(sqrt(pow(p1[i] - p3[i], 2) + pow(p1[i+1] - p3[i+1], 2) + pow(p1[i+2] - p3[i+2], 2)), 3);
+      dv_1[i+2] = -9.8 * m_2 * (p1[i+2] - p2[i+2]) / pow(sqrt(pow(p1[i] - p2[i], 2) + pow(p1[i+1] - p2[i+1], 2) + pow(p1[i+2] - p2[i+2], 2)), 3) \
+                  -9.8 * m_3 * (p1[i+2] - p3[i+2]) / pow(sqrt(pow(p1[i] - p3[i], 2) + pow(p1[i+1] - p3[i+1], 2) + pow(p1[i+2] - p3[i+2], 2)), 3);
+      dv_2[i] = -9.8 * m_3 * (p2[i] - p3[i]) / pow(sqrt(pow(p2[i] - p3[i], 2) + pow(p2[i+1] - p3[i+1], 2) + pow(p2[i+2] - p3[i+2], 2)), 3) \
+                  -9.8 * m_1 * (p2[i] - p1[i]) / pow(sqrt(pow(p2[i] - p1[i], 2) + pow(p2[i+1] - p1[i+1], 2) + pow(p2[i+2] - p1[i+2], 2)), 3);
+      dv_2[i+1] = -9.8 * m_3 * (p2[i+1] - p3[i+1]) / pow(sqrt(pow(p2[i] - p3[i], 2) + pow(p2[i+1] - p3[i+1], 2) + pow(p2[i+2] - p3[i+2], 2)), 3) \
+                  -9.8 * m_1 * (p2[i+1] - p1[i+1]) / pow(sqrt(pow(p2[i] - p1[i], 2) + pow(p2[i+1] - p1[i+1], 2) + pow(p2[i+2] - p1[i+2], 2)), 3);
+      dv_2[i+2] = -9.8 * m_3 * (p2[i+2] - p3[i+2]) / pow(sqrt(pow(p2[i] - p3[i], 2) + pow(p2[i+1] - p3[i+1], 2) + pow(p2[i+2] - p3[i+2], 2)), 3) \
+                  -9.8 * m_1 * (p2[i+2] - p1[i+2]) / pow(sqrt(pow(p2[i] - p1[i], 2) + pow(p2[i+1] - p1[i+1], 2) + pow(p2[i+2] - p1[i+2], 2)), 3);
+      dv_3[i] = -9.8 * m_1 * (p3[i] - p1[i]) / pow(sqrt(pow(p3[i] - p1[i], 2) + pow(p3[i+1] - p1[i+1], 2) + pow(p3[i+2] - p1[i+2], 2)), 3) \
+                  -9.8 * m_2 * (p3[i] - p2[i]) / pow(sqrt(pow(p3[i] - p2[i], 2) + pow(p3[i+1] - p2[i+1], 2) + pow(p3[i+2] - p2[i+2], 2)), 3);
+      dv_3[i+1] = -9.8 * m_1 * (p3[i+1] - p1[i+1]) / pow(sqrt(pow(p3[i] - p1[i], 2) + pow(p3[i+1] - p1[i+1], 2) + pow(p3[i+2] - p1[i+2], 2)), 3) \
+                  -9.8 * m_2 * (p3[i+1] - p2[i+1]) / pow(sqrt(pow(p3[i] - p2[i], 2) + pow(p3[i+1] - p2[i+1], 2) + pow(p3[i+2] - p2[i+2], 2)), 3);
+      dv_3[i+2] = -9.8 * m_1 * (p3[i+2] - p1[i+2]) / pow(sqrt(pow(p3[i] - p1[i], 2) + pow(p3[i+1] - p1[i+1], 2) + pow(p3[i+2] - p1[i+2], 2)), 3) \
+                  -9.8 * m_2 * (p3[i+2] - p2[i+2]) / pow(sqrt(pow(p3[i] - p2[i], 2) + pow(p3[i+1] - p2[i+1], 2) + pow(p3[i+2] - p2[i+2], 2)), 3);
 
-      dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
-                    -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
-      dv_1pr_y[i] = -9.8 * m_2 * (p1_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
-                    -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
-      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
-                    -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
-      dv_2pr_x[i] = -9.8 * m_3 * (p2_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
-                    -9.8 * m_1 * (p2_prime_x[i] - p1_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
-      dv_2pr_y[i] = -9.8 * m_3 * (p2_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
-                    -9.8 * m_1 * (p2_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
-      dv_2pr_z[i] = -9.8 * m_3 * (p2_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
-                    -9.8 * m_1 * (p2_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
-      dv_3pr_x[i] = -9.8 * m_1 * (p3_prime_x[i] - p1_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
-      dv_3pr_y[i] = -9.8 * m_1 * (p3_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
-      dv_3pr_z[i] = -9.8 * m_1 * (p3_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+      dv_1pr[i] = -9.8 * m_2 * (p1_prime[i] - p2_prime[i]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime[i] - p3_prime[i]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
+      dv_1pr[i+1] = -9.8 * m_2 * (p1_prime[i+1] - p2_prime[i+1]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime[i+1] - p3_prime[i+1]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
+      dv_1pr[i+2] = -9.8 * m_2 * (p1_prime[i+2] - p2_prime[i+2]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime[i+2] - p3_prime[i+2]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
+      dv_2pr[i] = -9.8 * m_3 * (p2_prime[i] - p3_prime[i]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime[i] - p1_prime[i]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
+      dv_2pr[i+1] = -9.8 * m_3 * (p2_prime[i+1] - p3_prime[i+1]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime[i+1] - p1_prime[i+1]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
+      dv_2pr[i+2] = -9.8 * m_3 * (p2_prime[i+2] - p3_prime[i+2]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime[i+2] - p1_prime[i+2]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
+      dv_3pr[i] = -9.8 * m_1 * (p3_prime[i] - p1_prime[i]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime[i] - p2_prime[i]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
+      dv_3pr[i+1] = -9.8 * m_1 * (p3_prime[i+1] - p1_prime[i+1]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime[i+1] - p2_prime[i+1]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
+      dv_3pr[i+2] = -9.8 * m_1 * (p3_prime[i+2] - p1_prime[i+2]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime[i+2] - p2_prime[i+2]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
 
       // find which trajectories have diverged and increment *times
-      not_diverged[i] = (p1_x[i]-p1_prime_x[i])*(p1_x[i]-p1_prime_x[i]) + (p1_y[i]-p1_prime_y[i])*(p1_y[i]-p1_prime_y[i]) + (p1_z[i]-p1_prime_z[i])*(p1_z[i]-p1_prime_z[i]) <= critical_distance*critical_distance;
+      not_diverged[i] = (p1[i]-p1_prime[i])*(p1[i]-p1_prime[i]) + (p1[i+1]-p1_prime[i+1])*(p1[i+1]-p1_prime[i+1]) + (p1[i+2]-p1_prime[i+2])*(p1[i+2]-p1_prime[i+2]) <= critical_distance*critical_distance;
       still_together[i] = not_diverged[i] & still_together[i]; // bitwise and 
       if (still_together[i] == 1){
         times[i]++;
       };
 
       // compute new velocities
-      nv1_x[i] = v1_x[i] + delta_t * dv_1_x[i];
-      nv1_y[i] = v1_y[i] + delta_t * dv_1_y[i];
-      nv1_z[i] = v1_z[i] + delta_t * dv_1_z[i];
+      nv1[i] = v1[i] + delta_t * dv_1[i];
+      nv1[i+1] = v1[i+1] + delta_t * dv_1[i+1];
+      nv1[i+2] = v1[i+2] + delta_t * dv_1[i+2];
 
-      nv2_x[i] = v2_x[i] + delta_t * dv_2_x[i];
-      nv2_y[i] = v2_y[i] + delta_t * dv_2_y[i];
-      nv2_z[i] = v2_z[i] + delta_t * dv_2_z[i];
+      nv2[i] = v2[i] + delta_t * dv_2[i];
+      nv2[i+1] = v2[i+1] + delta_t * dv_2[i+1];
+      nv2[i+2] = v2[i+2] + delta_t * dv_2[i+2];
 
-      nv3_x[i] = v3_x[i] + delta_t * dv_3_x[i];
-      nv3_y[i] = v3_y[i] + delta_t * dv_3_y[i];
-      nv3_z[i] = v3_z[i] + delta_t * dv_3_z[i];
+      nv3[i] = v3[i] + delta_t * dv_3[i];
+      nv3[i+1] = v3[i+1] + delta_t * dv_3[i+1];
+      nv3[i+2] = v3[i+2] + delta_t * dv_3[i+2];
 
-      nv1_prime_x[i] = v1_prime_x[i] + delta_t * dv_1pr_x[i];
-      nv1_prime_y[i] = v1_prime_y[i] + delta_t * dv_1pr_y[i];
-      nv1_prime_z[i] = v1_prime_z[i] + delta_t * dv_1pr_z[i];
+      nv1_prime[i] = v1_prime[i] + delta_t * dv_1pr[i];
+      nv1_prime[i+1] = v1_prime[i+1] + delta_t * dv_1pr[i+1];
+      nv1_prime[i+2] = v1_prime[i+2] + delta_t * dv_1pr[i+2];
 
-      nv2_prime_x[i] = v2_prime_x[i] + delta_t * dv_2pr_x[i];
-      nv2_prime_y[i] = v2_prime_y[i] + delta_t * dv_2pr_y[i];
-      nv2_prime_z[i] = v2_prime_z[i] + delta_t * dv_2pr_z[i];
+      nv2_prime[i] = v2_prime[i] + delta_t * dv_2pr[i];
+      nv2_prime[i+1] = v2_prime[i+1] + delta_t * dv_2pr[i+1];
+      nv2_prime[i+2] = v2_prime[i+2] + delta_t * dv_2pr[i+2];
 
-      nv3_prime_x[i] = v3_prime_x[i] + delta_t * dv_3pr_x[i];
-      nv3_prime_y[i] = v3_prime_y[i] + delta_t * dv_3pr_y[i];
-      nv3_prime_z[i] = v3_prime_z[i] + delta_t * dv_3pr_z[i];
+      nv3_prime[i] = v3_prime[i] + delta_t * dv_3pr[i];
+      nv3_prime[i+1] = v3_prime[i+1] + delta_t * dv_3pr[i+1];
+      nv3_prime[i+2] = v3_prime[i+2] + delta_t * dv_3pr[i+2];
 
       // compute positions with current velocities
-      p1_x[i] = p1_x[i] + delta_t * v1_x[i];
-      p1_y[i] = p1_y[i] + delta_t * v1_y[i];
-      p1_z[i] = p1_z[i] + delta_t * v1_z[i];
+      p1[i] = p1[i] + delta_t * v1[i];
+      p1[i+1] = p1[i+1] + delta_t * v1[i+1];
+      p1[i+2] = p1[i+2] + delta_t * v1[i+2];
 
-      p2_x[i] = p2_x[i] + delta_t * v2_x[i];
-      p2_y[i] = p2_y[i] + delta_t * v2_y[i];
-      p2_z[i] = p2_z[i] + delta_t * v2_z[i];
+      p2[i] = p2[i] + delta_t * v2[i];
+      p2[i+1] = p2[i+1] + delta_t * v2[i+1];
+      p2[i+2] = p2[i+2] + delta_t * v2[i+2];
 
-      p3_x[i] = p3_x[i] + delta_t * v3_x[i];
-      p3_y[i] = p3_y[i] + delta_t * v3_y[i];
-      p3_z[i] = p3_z[i] + delta_t * v3_z[i];
+      p3[i] = p3[i] + delta_t * v3[i];
+      p3[i+1] = p3[i+1] + delta_t * v3[i+1];
+      p3[i+2] = p3[i+2] + delta_t * v3[i+2];
 
-      p1_prime_x[i] = p1_prime_x[i] + delta_t * v1_prime_x[i];
-      p1_prime_y[i] = p1_prime_y[i] + delta_t * v1_prime_y[i];
-      p1_prime_z[i] = p1_prime_z[i] + delta_t * v1_prime_z[i];
+      p1_prime[i] = p1_prime[i] + delta_t * v1_prime[i];
+      p1_prime[i+1] = p1_prime[i+1] + delta_t * v1_prime[i+1];
+      p1_prime[i+2] = p1_prime[i+2] + delta_t * v1_prime[i+2];
 
-      p2_prime_x[i] = p2_prime_x[i] + delta_t * v2_prime_x[i];
-      p2_prime_y[i] = p2_prime_y[i] + delta_t * v2_prime_y[i];
-      p2_prime_z[i] = p2_prime_z[i] + delta_t * v2_prime_z[i];
+      p2_prime[i] = p2_prime[i] + delta_t * v2_prime[i];
+      p2_prime[i+1] = p2_prime[i+1] + delta_t * v2_prime[i+1];
+      p2_prime[i+2] = p2_prime[i+2] + delta_t * v2_prime[i+2];
 
-      p3_prime_x[i] = p3_prime_x[i] + delta_t * v3_prime_x[i];
-      p3_prime_y[i] = p3_prime_y[i] + delta_t * v3_prime_y[i];
-      p3_prime_z[i] = p3_prime_z[i] + delta_t * v3_prime_z[i];
+      p3_prime[i] = p3_prime[i] + delta_t * v3_prime[i];
+      p3_prime[i+1] = p3_prime[i+1] + delta_t * v3_prime[i+1];
+      p3_prime[i+2] = p3_prime[i+2] + delta_t * v3_prime[i+2];
 
       // assign new velocities to current velocities
-      v1_x[i] = nv1_x[i];
-      v1_y[i] = nv1_y[i];
-      v1_z[i] = nv1_z[i];
+      v1[i] = nv1[i];
+      v1[i+1] = nv1[i+1];
+      v1[i+2] = nv1[i+2];
 
-      v2_x[i] = nv2_x[i];
-      v2_y[i] = nv2_y[i];
-      v2_z[i] = nv2_z[i];
+      v2[i] = nv2[i];
+      v2[i+1] = nv2[i+1];
+      v2[i+2] = nv2[i+2];
 
-      v3_x[i] = nv3_x[i];
-      v3_y[i] = nv3_y[i];
-      v3_z[i] = nv3_z[i];
+      v3[i] = nv3[i];
+      v3[i+1] = nv3[i+1];
+      v3[i+2] = nv3[i+2];
 
-      v1_prime_x[i] = nv1_prime_x[i];
-      v1_prime_y[i] = nv1_prime_y[i];
-      v1_prime_z[i] = nv1_prime_z[i];
+      v1_prime[i] = nv1_prime[i];
+      v1_prime[i+1] = nv1_prime[i+1];
+      v1_prime[i+2] = nv1_prime[i+2];
 
-      v2_prime_x[i] = nv2_prime_x[i];
-      v2_prime_y[i] = nv2_prime_y[i];
-      v2_prime_z[i] = nv2_prime_z[i];
+      v2_prime[i] = nv2_prime[i];
+      v2_prime[i+1] = nv2_prime[i+1];
+      v2_prime[i+2] = nv2_prime[i+2];
 
-      v3_prime_x[i] = nv3_prime_x[i];
-      v3_prime_y[i] = nv3_prime_y[i];
-      v3_prime_z[i] = nv3_prime_z[i];
+      v3_prime[i] = nv3_prime[i];
+      v3_prime[i+1] = nv3_prime[i+1];
+      v3_prime[i+2] = nv3_prime[i+2];
       }
     }
   }
