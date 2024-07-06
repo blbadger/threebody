@@ -39,34 +39,48 @@ void divergence(int n,
               double *nv1_prime, double *nv2_prime, double *nv3_prime
               )
 {
+
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
     if (i < n and still_together[i]){
       // compute accelerations
-      dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_x[i] - p3_x[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
-      dv_1_y[i] = -9.8 * m_2 * (p1_y[i] - p2_y[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_y[i] - p3_y[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
-      dv_1_z[i] = -9.8 * m_2 * (p1_z[i] - p2_z[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_z[i] - p3_z[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
-      
-      dv_2_x[i] = -9.8 * m_3 * (p2_x[i] - p3_x[i]) / (sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))) -9.8 * m_1 * (p2_x[i] - p1_x[i]) / (sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i])));
-      dv_2_y[i] = -9.8 * m_3 * (p2_y[i] - p3_y[i]) / (sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))) -9.8 * m_1 * (p2_y[i] - p1_y[i]) / (sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i])));
-      dv_2_z[i] = -9.8 * m_3 * (p2_z[i] - p3_z[i]) / (sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))*sqrt((p2_x[i] - p3_x[i])*(p2_x[i] - p3_x[i]) + (p2_y[i] - p3_y[i])*(p2_y[i] - p3_y[i]) + (p2_z[i] - p3_z[i])*(p2_z[i] - p3_z[i]))) -9.8 * m_1 * (p2_z[i] - p1_z[i]) / (sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i]))*sqrt((p2_x[i] - p1_x[i])*(p2_x[i] - p1_x[i]) + (p2_y[i] - p1_y[i])*(p2_y[i] - p1_y[i]) + (p2_z[i] - p1_z[i])*(p2_z[i] - p1_z[i])));
+      dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
+      dv_1_y[i] = -9.8 * m_2 * (p1_y[i] - p2_y[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_y[i] - p3_y[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
+      dv_1_z[i] = -9.8 * m_2 * (p1_z[i] - p2_z[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_z[i] - p3_z[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
+      dv_2_x[i] = -9.8 * m_3 * (p2_x[i] - p3_x[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p2_x[i] - p1_x[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
+      dv_2_y[i] = -9.8 * m_3 * (p2_y[i] - p3_y[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p2_y[i] - p1_y[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
+      dv_2_z[i] = -9.8 * m_3 * (p2_z[i] - p3_z[i]) / pow(sqrt(pow(p2_x[i] - p3_x[i], 2) + pow(p2_y[i] - p3_y[i], 2) + pow(p2_z[i] - p3_z[i], 2)), 3) \
+                  -9.8 * m_1 * (p2_z[i] - p1_z[i]) / pow(sqrt(pow(p2_x[i] - p1_x[i], 2) + pow(p2_y[i] - p1_y[i], 2) + pow(p2_z[i] - p1_z[i], 2)), 3);
+      dv_3_x[i] = -9.8 * m_1 * (p3_x[i] - p1_x[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p3_x[i] - p2_x[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
+      dv_3_y[i] = -9.8 * m_1 * (p3_y[i] - p1_y[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p3_y[i] - p2_y[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
+      dv_3_z[i] = -9.8 * m_1 * (p3_z[i] - p1_z[i]) / pow(sqrt(pow(p3_x[i] - p1_x[i], 2) + pow(p3_y[i] - p1_y[i], 2) + pow(p3_z[i] - p1_z[i], 2)), 3) \
+                  -9.8 * m_2 * (p3_z[i] - p2_z[i]) / pow(sqrt(pow(p3_x[i] - p2_x[i], 2) + pow(p3_y[i] - p2_y[i], 2) + pow(p3_z[i] - p2_z[i], 2)), 3);
 
-      dv_3_x[i] = -9.8 * m_1 * (p3_x[i] - p1_x[i]) / (sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))) -9.8 * m_2 * (p3_x[i] - p2_x[i]) / (sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i])));
-      dv_3_y[i] = -9.8 * m_1 * (p3_y[i] - p1_y[i]) / (sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))) -9.8 * m_2 * (p3_y[i] - p2_y[i]) / (sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i])));
-      dv_3_z[i] = -9.8 * m_1 * (p3_z[i] - p1_z[i]) / (sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))*sqrt((p3_x[i] - p1_x[i])*(p3_x[i] - p1_x[i]) + (p3_y[i] - p1_y[i])*(p3_y[i] - p1_y[i]) + (p3_z[i] - p1_z[i])*(p3_z[i] - p1_z[i]))) -9.8 * m_2 * (p3_z[i] - p2_z[i]) / (sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i]))*sqrt((p3_x[i] - p2_x[i])*(p3_x[i] - p2_x[i]) + (p3_y[i] - p2_y[i])*(p3_y[i] - p2_y[i]) + (p3_z[i] - p2_z[i])*(p3_z[i] - p2_z[i])));
-
-      dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / (sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))) -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / (sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i])));
-      dv_1pr_y[i] = -9.8 * m_2 * (p1_prime_y[i] - p2_prime_y[i]) / (sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))) -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / (sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i])));
-      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / (sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))*sqrt((p1_prime_x[i] - p2_prime_x[i])*(p1_prime_x[i] - p2_prime_x[i]) + (p1_prime_y[i] - p2_prime_y[i])*(p1_prime_y[i] - p2_prime_y[i]) + (p1_prime_z[i] - p2_prime_z[i])*(p1_prime_z[i] - p2_prime_z[i]))) -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / (sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i]))*sqrt((p1_prime_x[i] - p3_prime_x[i])*(p1_prime_x[i] - p3_prime_x[i]) + (p1_prime_y[i] - p3_prime_y[i])*(p1_prime_y[i] - p3_prime_y[i]) + (p1_prime_z[i] - p3_prime_z[i])*(p1_prime_z[i] - p3_prime_z[i])));
-      
-      dv_2pr_x[i] = -9.8 * m_3 * (p2_prime_x[i] - p3_prime_x[i]) / (sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))) -9.8 * m_1 * (p2_prime_x[i] - p1_prime_x[i]) / (sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i])));
-      dv_2pr_y[i] = -9.8 * m_3 * (p2_prime_y[i] - p3_prime_y[i]) / (sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))) -9.8 * m_1 * (p2_prime_y[i] - p1_prime_y[i]) / (sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i])));
-      dv_2pr_z[i] = -9.8 * m_3 * (p2_prime_z[i] - p3_prime_z[i]) / (sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))*sqrt((p2_prime_x[i] - p3_prime_x[i])*(p2_prime_x[i] - p3_prime_x[i]) + (p2_prime_y[i] - p3_prime_y[i])*(p2_prime_y[i] - p3_prime_y[i]) + (p2_prime_z[i] - p3_prime_z[i])*(p2_prime_z[i] - p3_prime_z[i]))) -9.8 * m_1 * (p2_prime_z[i] - p1_prime_z[i]) / (sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i]))*sqrt((p2_prime_x[i] - p1_prime_x[i])*(p2_prime_x[i] - p1_prime_x[i]) + (p2_prime_y[i] - p1_prime_y[i])*(p2_prime_y[i] - p1_prime_y[i]) + (p2_prime_z[i] - p1_prime_z[i])*(p2_prime_z[i] - p1_prime_z[i])));
-
-      dv_3pr_x[i] = -9.8 * m_1 * (p3_prime_x[i] - p1_prime_x[i]) / (sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))) -9.8 * m_2 * (p3_prime_x[i] - p2_prime_x[i]) / (sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i])));
-      dv_3pr_y[i] = -9.8 * m_1 * (p3_prime_y[i] - p1_prime_y[i]) / (sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))) -9.8 * m_2 * (p3_prime_y[i] - p2_prime_y[i]) / (sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i])));
-      dv_3pr_z[i] = -9.8 * m_1 * (p3_prime_z[i] - p1_prime_z[i]) / (sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))*sqrt((p3_prime_x[i] - p1_prime_x[i])*(p3_prime_x[i] - p1_prime_x[i]) + (p3_prime_y[i] - p1_prime_y[i])*(p3_prime_y[i] - p1_prime_y[i]) + (p3_prime_z[i] - p1_prime_z[i])*(p3_prime_z[i] - p1_prime_z[i]))) -9.8 * m_2 * (p3_prime_z[i] - p2_prime_z[i]) / (sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i]))*sqrt((p3_prime_x[i] - p2_prime_x[i])*(p3_prime_x[i] - p2_prime_x[i]) + (p3_prime_y[i] - p2_prime_y[i])*(p3_prime_y[i] - p2_prime_y[i]) + (p3_prime_z[i] - p2_prime_z[i])*(p3_prime_z[i] - p2_prime_z[i])));
-
+      dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
+      dv_1pr_y[i] = -9.8 * m_2 * (p1_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
+      dv_1pr_z[i] = -9.8 * m_2 * (p1_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
+      dv_2pr_x[i] = -9.8 * m_3 * (p2_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime_x[i] - p1_prime_x[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
+      dv_2pr_y[i] = -9.8 * m_3 * (p2_prime_y[i] - p3_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
+      dv_2pr_z[i] = -9.8 * m_3 * (p2_prime_z[i] - p3_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p3_prime_x[i], 2) + pow(p2_prime_y[i] - p3_prime_y[i], 2) + pow(p2_prime_z[i] - p3_prime_z[i], 2)), 3) \
+                    -9.8 * m_1 * (p2_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p2_prime_x[i] - p1_prime_x[i], 2) + pow(p2_prime_y[i] - p1_prime_y[i], 2) + pow(p2_prime_z[i] - p1_prime_z[i], 2)), 3);
+      dv_3pr_x[i] = -9.8 * m_1 * (p3_prime_x[i] - p1_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+      dv_3pr_y[i] = -9.8 * m_1 * (p3_prime_y[i] - p1_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime_y[i] - p2_prime_y[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
+      dv_3pr_z[i] = -9.8 * m_1 * (p3_prime_z[i] - p1_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p1_prime_x[i], 2) + pow(p3_prime_y[i] - p1_prime_y[i], 2) + pow(p3_prime_z[i] - p1_prime_z[i], 2)), 3) \
+                    -9.8 * m_2 * (p3_prime_z[i] - p2_prime_z[i]) / pow(sqrt(pow(p3_prime_x[i] - p2_prime_x[i], 2) + pow(p3_prime_y[i] - p2_prime_y[i], 2) + pow(p3_prime_z[i] - p2_prime_z[i], 2)), 3);
 
       // find which trajectories have diverged and increment *times
       not_diverged[i] = (p1_x[i]-p1_prime_x[i])*(p1_x[i]-p1_prime_x[i]) + (p1_y[i]-p1_prime_y[i])*(p1_y[i]-p1_prime_y[i]) + (p1_z[i]-p1_prime_z[i])*(p1_z[i]-p1_prime_z[i]) <= critical_distance*critical_distance;
@@ -232,68 +246,58 @@ int main(void)
   for (int i = 0; i < N; i++) {
     int remainder = i % resolution;
     int step = i / resolution;
-    p1_x[i] = -20. + 40*(double(remainder)/double(resolution));
-    p1_y[i] = -20. + 40*(double(step)/double(resolution));
-    p1_z[i] = -11.0;
+    p1[i] = -20. + 40*(double(remainder)/double(resolution));
+    p1[i+N] = -20. + 40*(double(step)/double(resolution));
+    p1[i+2*N] = -11.0;
 
-    p2_x[i] = 0.0;
-    p2_y[i] = 0.0;
-    p2_z[i] = 0.0;
+    p2[i] = 0.0;
+    p2[i+N] = 0.0;
+    p2[i+2*N] = 0.0;
 
-    p3_x[i] = 10.0;
-    p3_y[i] = 10.0;
-    p3_z[i] = 12.0;
+    p3[i] = 10.0;
+    p3[i+N] = 10.0;
+    p3[i+2*N] = 12.0;
 
     // shift p1 in all x, y, z vectors
-    p1_prime_x[i] = -20. + 40*(double(remainder)/double(resolution)) + 0.001;
-    p1_prime_y[i] = -20. + 40*(double(step)/double(resolution)) + 0.001;
-    p1_prime_z[i] = -11.0 + 0.001;
+    p1_prime[i] = -20. + 40*(double(remainder)/double(resolution)) + 0.001;
+    p1_prime[i+N] = -20. + 40*(double(step)/double(resolution)) + 0.001;
+    p1_prime[i+N*2] = -11.0 + 0.001;
 
-    p2_prime_x[i] = 0.0;
-    p2_prime_y[i] = 0.0;
-    p2_prime_z[i] = 0.0;
+    p2_prime[i] = 0.0;
+    p2_prime[i+N] = 0.0;
+    p2_prime[i+N*2] = 0.0;
 
     p3_prime_x[i] = 10.0;
-    p3_prime_y[i] = 10.0;
-    p3_prime_z[i] = 12.0;
+    p3_prime_y[i+N] = 10.0;
+    p3_prime_z[i+N*2] = 12.0;
 
-    v1_x[i] = -3.;
-    v1_y[i] = 0.;
-    v1_z[i] = 0.;
+    v1[i] = -3.;
+    v1[i+N] = 0.;
+    v1[i+N*2] = 0.;
 
-    v2_x[i] = 0.;
-    v2_y[i] = 0.;
-    v2_z[i] = 0.;
+    v2[i] = 0.;
+    v2[i+N] = 0.;
+    v2[i+N*2] = 0.;
 
-    v3_x[i] = 3.;
-    v3_y[i] = 0.;
-    v3_z[i] = 0.;
+    v3[i] = 3.;
+    v3[i+N] = 0.;
+    v3[i+N*2] = 0.;
 
-    v1_prime_x[i] = -3.;
-    v1_prime_y[i] = 0.;
-    v1_prime_z[i] = 0.;
+    v1_prime[i] = -3.;
+    v1_prime[i+N] = 0.;
+    v1_prime[i+2*N] = 0.;
 
-    v2_prime_x[i] = 0.;
-    v2_prime_y[i] = 0.;
-    v2_prime_z[i] = 0.;
+    v2_prime[i] = 0.;
+    v2_prime[i+N] = 0.;
+    v2_prime[i+N*2] = 0.;
 
-    v3_prime_x[i] = 3.;
-    v3_prime_y[i] = 0.;
-    v3_prime_z[i] = 0.;
+    v3_prime[i] = 3.;
+    v3_prime[i+N] = 0.;
+    v3_prime[i+N*2] = 0.;
 
     times[i] = 0;
     still_together[i] = true;
     not_diverged[i] = true;
-  }
-
-  float *x, *d_x;
-
-  int N = 10000000;
-  cudaHostAlloc((void**)&x, N*sizeof(float), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-  int n_gpus=4;
-  for (int i = 0; i < N/n_gpus; i++) {
-      x[i] = 1.0f;
   }
 
   // launch one thread per GPU
@@ -305,256 +309,124 @@ int main(void)
     int start_idx = (N/n_gpus)*d;
     int end_idx = start_idx + N/n_gpus;
     std::cout << "Start index: " << start_idx << "\nEnd index: " << end_idx << "\n";
-    int block_n = N/n_gpus;
+    int block_n = (N/n_gpus) * 3;
     cudaSetDevice(omp_get_thread_num());
     cudaStreamCreate(&streams[d]);
 
-    cudaMalloc(&d_p1_x, block_n*sizeof(double)); 
-    cudaMalloc(&d_p1_y, block_n*sizeof(double)); 
-    cudaMalloc(&d_p1_z, block_n*sizeof(double));
+    cudaMalloc(&d_p1, block_n*sizeof(double)); 
+    cudaMalloc(&d_p2, block_n*sizeof(double)); 
+    cudaMalloc(&d_p3, block_n*sizeof(double));
 
-    cudaMalloc(&d_p2_x, block_n*sizeof(double));
-    cudaMalloc(&d_p2_y, block_n*sizeof(double));
-    cudaMalloc(&d_p2_z, block_n*sizeof(double));
+    cudaMalloc(&d_p1_prime, block_n*sizeof(double));
+    cudaMalloc(&d_p2_prime, block_n*sizeof(double));
+    cudaMalloc(&d_p3_prime, block_n*sizeof(double));
 
-    cudaMalloc(&d_p3_x, block_n*sizeof(double));
-    cudaMalloc(&d_p3_y, block_n*sizeof(double));
-    cudaMalloc(&d_p3_z, block_n*sizeof(double));
+    cudaMalloc(&d_dv_1, block_n*sizeof(double));
+    cudaMalloc(&d_dv_2, block_n*sizeof(double));
+    cudaMalloc(&d_dv_3, block_n*sizeof(double));
 
-    cudaMalloc(&d_p1_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_p1_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_p1_prime_z, block_n*sizeof(double));
+    cudaMalloc(&d_dv_1pr, block_n*sizeof(double));
+    cudaMalloc(&d_dv_2pr, block_n*sizeof(double));
+    cudaMalloc(&d_dv_3pr, block_n*sizeof(double));
 
-    cudaMalloc(&d_p2_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_p2_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_p2_prime_z, block_n*sizeof(double));
+    cudaMalloc(&d_v1, block_n*sizeof(double));
+    cudaMalloc(&d_v2, block_n*sizeof(double));
+    cudaMalloc(&d_v3, block_n*sizeof(double));
 
-    cudaMalloc(&d_p3_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_p3_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_p3_prime_z, block_n*sizeof(double));
+    cudaMalloc(&d_v1_prime, block_n*sizeof(double));
+    cudaMalloc(&d_v2_prime, block_n*sizeof(double));
+    cudaMalloc(&d_v3_prime, block_n*sizeof(double));
 
-    cudaMalloc(&d_dv_1_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_1_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_1_z, block_n*sizeof(double));
+    cudaMalloc(&d_nv1, block_n*sizeof(double));
+    cudaMalloc(&d_nv2, block_n*sizeof(double));
+    cudaMalloc(&d_nv3, block_n*sizeof(double));
 
-    cudaMalloc(&d_dv_2_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_2_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_2_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_dv_3_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_3_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_3_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_dv_1pr_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_1pr_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_1pr_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_dv_2pr_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_2pr_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_2pr_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_dv_3pr_x, block_n*sizeof(double));
-    cudaMalloc(&d_dv_3pr_y, block_n*sizeof(double));
-    cudaMalloc(&d_dv_3pr_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v1_x, block_n*sizeof(double));
-    cudaMalloc(&d_v1_y, block_n*sizeof(double));
-    cudaMalloc(&d_v1_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v2_x, block_n*sizeof(double));
-    cudaMalloc(&d_v2_y, block_n*sizeof(double));
-    cudaMalloc(&d_v2_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v3_x, block_n*sizeof(double));
-    cudaMalloc(&d_v3_y, block_n*sizeof(double));
-    cudaMalloc(&d_v3_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v1_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_v1_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_v1_prime_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v2_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_v2_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_v2_prime_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_v3_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_v3_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_v3_prime_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv1_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv1_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv1_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv2_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv2_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv2_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv3_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv3_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv3_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv1_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv1_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv1_prime_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv2_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv2_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv2_prime_z, block_n*sizeof(double));
-
-    cudaMalloc(&d_nv3_prime_x, block_n*sizeof(double));
-    cudaMalloc(&d_nv3_prime_y, block_n*sizeof(double));
-    cudaMalloc(&d_nv3_prime_z, block_n*sizeof(double));
+    cudaMalloc(&d_nv1_prime, block_n*sizeof(double));
+    cudaMalloc(&d_nv2_prime, block_n*sizeof(double));
+    cudaMalloc(&d_nv3_prime, block_n*sizeof(double));
 
     cudaMalloc(&d_still_together, block_n*sizeof(bool));
     cudaMalloc(&d_times, block_n*sizeof(int));
     cudaMalloc(&d_not_diverged, block_n*sizeof(bool));
 
-    cudaMemcpyAsync(d_p1_x, p1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p1_y, p1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p1_z, p1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1, p1+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2, p2+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3, p3+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_p2_x, p2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p2_y, p2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p2_z, p2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p1_prime, p1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p2_prime, p2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_p3_prime, p3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_p3_x, p3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p3_y, p3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p3_z, p3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1, dv_1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2, dv_2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3, dv_3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_p1_prime_x, p1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p1_prime_y, p1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p1_prime_z, p1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_1pr, dv_1pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_2pr, dv_2pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_dv_3pr, dv_3pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_p2_prime_x, p2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p2_prime_y, p2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p2_prime_z, p2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1, v1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2, v2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3, v3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_p3_prime_x, p3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p3_prime_y, p3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_p3_prime_z, p3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v1_prime, v1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v2_prime, v2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_v3_prime, v3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_dv_1_x, dv_1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_1_y, dv_1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_1_z, dv_1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1, nv1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2, nv2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3, nv3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
-    cudaMemcpyAsync(d_dv_2_x, dv_2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_2_y, dv_2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_2_z, dv_2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_dv_3_x, dv_3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_3_y, dv_3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_3_z, dv_3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_dv_1pr_x, dv_1pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_1pr_y, dv_1pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_1pr_z, dv_1pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_dv_2pr_x, dv_2pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_2pr_y, dv_2pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_2pr_z, dv_2pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_dv_3pr_x, dv_3pr_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_3pr_y, dv_3pr_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_dv_3pr_z, dv_3pr_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v1_x, v1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v1_y, v1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v1_z, v1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v2_x, v2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v2_y, v2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v2_z, v2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v3_x, v3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v3_y, v3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v3_z, v3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v1_prime_x, v1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v1_prime_y, v1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v1_prime_z, v1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v2_prime_x, v2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v2_prime_y, v2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v2_prime_z, v2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_v3_prime_x, v3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v3_prime_y, v3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_v3_prime_z, v3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv1_x, nv1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv1_y, nv1_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv1_z, nv1_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv2_x, nv2_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv2_y, nv2_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv2_z, nv2_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv3_x, nv3_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv3_y, nv3_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv3_z, nv3_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv1_prime_x, nv1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv1_prime_y, nv1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv1_prime_z, nv1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv2_prime_x, nv2_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv2_prime_y, nv2_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv2_prime_z, nv2_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-
-    cudaMemcpyAsync(d_nv3_prime_x, nv3_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv3_prime_y, nv3_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
-    cudaMemcpyAsync(d_nv3_prime_z, nv3_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv1_prime, nv1_prime_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv2_prime, nv1_prime_y+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
+    cudaMemcpyAsync(d_nv3_prime, nv1_prime_z+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice, streams[d]);
 
     cudaMemcpyAsync(d_times, times+start_idx, block_n*sizeof(int), cudaMemcpyHostToDevice, streams[d]);
     cudaMemcpyAsync(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
     cudaMemcpyAsync(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
 
-    // // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
-    //  
-    //     block_n, 
-    //     steps, 
-    //     delta_t,
-    //     d_still_together,
-    //     d_not_diverged,
-    //     d_times,
-    //     m1, m2, m3,
-    //     critical_distance,
-    //     d_p1_x, d_p1_y, d_p1_z, 
-    //     d_p2_x, d_p2_y, d_p2_z, 
-    //     d_p3_x, d_p3_y, d_p3_z, 
-    //     d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
-    //     d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
-    //     d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
-    //     d_dv_1_x, d_dv_1_y, d_dv_1_z,
-    //     d_dv_2_x, d_dv_2_y, d_dv_2_z,
-    //     d_dv_3_x, d_dv_3_y, d_dv_3_z,
-    //     d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
-    //     d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
-    //     d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
-    //     d_v1_x, d_v1_y, d_v1_z,
-    //     d_v2_x, d_v2_y, d_v2_z,
-    //     d_v3_x, d_v3_y, d_v3_z,
-    //     d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
-    //     d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
-    //     d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
-    //     d_nv1_x, d_nv1_y, d_nv1_z,
-    //     d_nv2_x, d_nv2_y, d_nv2_z,
-    //     d_nv3_x, d_nv3_y, d_nv3_z,
-    //     d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
-    //     d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
-    //     d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
-    //     );
+    // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
+    divergence<<<(N+255)/256, 256, 0, streams[d]>>>(
+        block_n, 
+        steps, 
+        delta_t,
+        d_still_together,
+        d_not_diverged,
+        d_times,
+        m1, m2, m3,
+        critical_distance,
+        d_p1, 
+        d_p2, 
+        d_p3, 
+        d_p1_prime, 
+        d_p2_prime, 
+        d_p3_prime,
+        d_dv_1,
+        d_dv_2,
+        d_dv_3,
+        d_dv_1pr,
+        d_dv_2pr,
+        d_dv_3pr,
+        d_v1,
+        d_v2,
+        d_v3,
+        d_v1_prime,
+        d_v2_prime,
+        d_v3_prime,
+        d_nv1,
+        d_nv2,
+        d_nv3,
+        d_nv1_prime,    
+        d_nv2_prime,
+        d_nv3_prime
+        );
 
-    // cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaDeviceSynchronize();
+    cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
+    cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    cudaMemcpyAsync(p1+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    cudaMemcpyAsync(p1_prime+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    cudaDeviceSynchronize();
     }
 
   // check computation for completion and accuracy
