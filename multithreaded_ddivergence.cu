@@ -1,9 +1,25 @@
+
+
 #include <stdio.h>
 #include <iostream>
 #include <chrono>
 #include <omp.h>
 #include <thread>
 #include <vector>
+
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+
+__global__
+void saxpy(int n, float a, float *x)
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  for (int j=0; j < 100000000; j++){
+    if (i < n) {
+      x[i] += 1;
+    }
+  }
+}
 
 // kernal declaration
 __global__
@@ -160,7 +176,7 @@ int main(void)
   // initialize timer
   std::chrono::time_point<std::chrono::system_clock> start, end;
   start = std::chrono::system_clock::now();
-  int N = 1000000;
+  int N = 9000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -220,9 +236,9 @@ int main(void)
   bool *still_together, *d_still_together;
   int *times, *d_times;
   bool *not_diverged, *d_not_diverged;
-  int n_gpus;
-  cudaGetDeviceCount(&n_gpus);
-  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.";
+  int n_gpus=4;
+//  cudaGetDeviceCount(&n_gpus);
+  std::cout << n_gpus << " GPUs present. Allocating CPU memory and initializing values.\n";
 
   cudaHostAlloc((void**)&p1_x, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
   cudaHostAlloc((void**)&p1_y, N*sizeof(double), cudaHostAllocWriteCombined | cudaHostAllocMapped);
@@ -384,18 +400,27 @@ int main(void)
     not_diverged[i] = true;
   }
 
+  float *x, *d_x;
+
+//  int N = 10000000;
+  cudaHostAlloc((void**)&x, N*sizeof(float), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+
+//  int n_gpus=4;
+  for (int i = 0; i < N/n_gpus; i++) {
+      x[i] = 1.0f;
+  }
+
   // launch one thread per GPU
   cudaStream_t streams[n_gpus];
-  #pragma omp parallel for
-  for (int d=0; d<n_gpus; d++){
-    std::cout << "GPU number " << d << " initialized" << "\n";
-
+  #pragma omp parallel num_threads(n_gpus)
+  {
+    int d = omp_get_thread_num();
     // assumes that n_gpus divides N with no remainder, which is safe as N is a large square.
     int start_idx = (N/n_gpus)*d;
     int end_idx = start_idx + N/n_gpus;
     std::cout << "Start index: " << start_idx << "\nEnd index: " << end_idx << "\n";
     int block_n = N/n_gpus;
-    cudaSetDevice(d);
+    cudaSetDevice(omp_get_thread_num());
     cudaStreamCreate(&streams[d]);
 
     cudaMalloc(&d_p1_x, block_n*sizeof(double)); 
@@ -598,58 +623,62 @@ int main(void)
     cudaMemcpyAsync(d_still_together, still_together+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
     cudaMemcpyAsync(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice, streams[d]);
 
+//    cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));
+//    cudaMemcpyAsync(d_x, x+start_idx, (N/n_gpus)*sizeof(float), cudaMemcpyHostToDevice, streams[d]);
 
-    // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
-    divergence<<<(block_n+127)/128, 128, 0, streams[d]>>>(
-        block_n, 
-        steps, 
-        delta_t,
-        d_still_together,
-        d_not_diverged,
-        d_times,
-        m1, m2, m3,
-        critical_distance,
-        d_p1_x, d_p1_y, d_p1_z, 
-        d_p2_x, d_p2_y, d_p2_z, 
+//    saxpy<<<(N+127)/128, 128, 0, streams[d]>>>(N/n_gpus, 2.0f, d_x);
+
+//    cudaMemcpyAsync(x+start_idx, d_x, (N/n_gpus)*sizeof(float), cudaMemcpyDeviceToHost, streams[d]);
+//    cudaDeviceSynchronize();
+
+     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx, 0, stream>>>>
+     divergence<<<(block_n+255)/256, 256, 0, streams[d]>>>(
+         block_n, 
+         steps, 
+         delta_t,
+         d_still_together,
+         d_not_diverged,
+         d_times,
+         m1, m2, m3,
+         critical_distance,
+         d_p1_x, d_p1_y, d_p1_z, 
+         d_p2_x, d_p2_y, d_p2_z, 
         d_p3_x, d_p3_y, d_p3_z, 
-        d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
+         d_p1_prime_x, d_p1_prime_y, d_p1_prime_z, 
         d_p2_prime_x, d_p2_prime_y, d_p2_prime_z, 
-        d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
-        d_dv_1_x, d_dv_1_y, d_dv_1_z,
-        d_dv_2_x, d_dv_2_y, d_dv_2_z,
+         d_p3_prime_x, d_p3_prime_y, d_p3_prime_z,
+         d_dv_1_x, d_dv_1_y, d_dv_1_z,
+         d_dv_2_x, d_dv_2_y, d_dv_2_z,
         d_dv_3_x, d_dv_3_y, d_dv_3_z,
-        d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
+         d_dv_1pr_x, d_dv_1pr_y, d_dv_1pr_z,
         d_dv_2pr_x, d_dv_2pr_y, d_dv_2pr_z,
-        d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
-        d_v1_x, d_v1_y, d_v1_z,
-        d_v2_x, d_v2_y, d_v2_z,
-        d_v3_x, d_v3_y, d_v3_z,
-        d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
-        d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
-        d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
-        d_nv1_x, d_nv1_y, d_nv1_z,
-        d_nv2_x, d_nv2_y, d_nv2_z,
+         d_dv_3pr_x, d_dv_3pr_y, d_dv_3pr_z,
+         d_v1_x, d_v1_y, d_v1_z,
+         d_v2_x, d_v2_y, d_v2_z,
+         d_v3_x, d_v3_y, d_v3_z,
+         d_v1_prime_x, d_v1_prime_y, d_v1_prime_z,
+         d_v2_prime_x, d_v2_prime_y, d_v2_prime_z,
+         d_v3_prime_x, d_v3_prime_y, d_v3_prime_z,
+         d_nv1_x, d_nv1_y, d_nv1_z,
+         d_nv2_x, d_nv2_y, d_nv2_z,
         d_nv3_x, d_nv3_y, d_nv3_z,
-        d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
-        d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
+         d_nv1_prime_x, d_nv1_prime_y, d_nv1_prime_z,    
+         d_nv2_prime_x, d_nv2_prime_y, d_nv2_prime_z,
         d_nv3_prime_x, d_nv3_prime_y, d_nv3_prime_z
-        );
+         );
 
-
-    cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost);
-    cudaStreamSynchronize(streams[d]);
-    cudaDeviceSynchronize();
+    cudaMemcpyAsync(times+start_idx, d_times, block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+    // cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
+     cudaDeviceSynchronize();
     }
 
-  cudaDeviceSynchronize();
   // check computation for completion and accuracy
   for (int k=0; k<2; k++) {
     std::cout << times[k] << ' ';
@@ -662,7 +691,11 @@ int main(void)
     std::cout << p1_prime_y[k] << ' ';
     std::cout << p1_prime_z[k] << ' ';
     std::cout << '\n';
-  
+ } 
+  std::cout << x[0]<< "\n";
+  cudaError_t err = cudaGetLastError();  // add
+std::cout << err << "\n";
+  if (err != cudaSuccess) std::cout << "CUDA error: " << cudaGetErrorString(err) << std::endl; // add
   // cudaFree(d_p1_x); cudaFree(d_p1_y); cudaFree(d_p1_z);
   // cudaFree(d_p2_x); cudaFree(d_p2_y); cudaFree(d_p2_z);
   // cudaFree(d_p3_x); cudaFree(d_p3_y); cudaFree(d_p3_z);
@@ -737,9 +770,4 @@ int main(void)
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
   }
-
-}
-
-
-
 

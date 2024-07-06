@@ -595,7 +595,7 @@ int main(void)
     cudaMemcpy(d_not_diverged, not_diverged+start_idx, block_n*sizeof(bool), cudaMemcpyHostToDevice);
 
     // call CUDA kernal on inputs in configuration <<< blockIdx, threadIdx>>>>
-    divergence<<<(block_n+127)/128, 128>>>(
+    divergence<<<(block_n+255)/256, 256>>>(
         block_n, 
         steps, 
         delta_t,
