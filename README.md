@@ -13,7 +13,12 @@ For further speedups via custom CUDA implementation, `divergence.cu` provides a 
 
 If you have multiple GPUs, `distributed_divergence.cu` provides a CUDA kernel and driver code that performs distributed integration, such that with N devices you can expect the total time taken to be 1/N times the time taken for one. With 4x V100 GPUs, you can expect to integrate a 1000x1000 grid of initial positions for 50,000 steps in around 18 seconds.
 
+An single body's trajectory upon shifting relative to the other two bodies:
+
 ![3body](https://blbadger.github.io/3_body_problem/3_body_shifted_1.png)
+
+
+A 1000x1000 (50k steps) divergence plot:
 
 ![divergence](https://blbadger.github.io/3_body_problem/Threebody_divergence_xy.png)
 
