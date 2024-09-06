@@ -4,7 +4,6 @@
 #include <omp.h>
 #include <thread>
 #include <vector>
-
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 
@@ -39,7 +38,6 @@ void divergence(int n,
               double *nv1_prime, double *nv2_prime, double *nv3_prime
               )
 {
-
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
     if (i < n and still_together[i]){
@@ -64,19 +62,19 @@ void divergence(int n,
                   -9.8 * m_2 * (p3[i+2] - p2[i+2]) / pow(sqrt(pow(p3[i] - p2[i], 2) + pow(p3[i+1] - p2[i+1], 2) + pow(p3[i+2] - p2[i+2], 2)), 3);
 
       dv_1pr[i] = -9.8 * m_2 * (p1_prime[i] - p2_prime[i]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
-                    -9.8 * m_3 * (p1_prime[i] - p3_prime[i]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
+                  -9.8 * m_3 * (p1_prime[i] - p3_prime[i]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
       dv_1pr[i+1] = -9.8 * m_2 * (p1_prime[i+1] - p2_prime[i+1]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
                     -9.8 * m_3 * (p1_prime[i+1] - p3_prime[i+1]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
       dv_1pr[i+2] = -9.8 * m_2 * (p1_prime[i+2] - p2_prime[i+2]) / pow(sqrt(pow(p1_prime[i] - p2_prime[i], 2) + pow(p1_prime[i+1] - p2_prime[i+1], 2) + pow(p1_prime[i+2] - p2_prime[i+2], 2)), 3) \
                     -9.8 * m_3 * (p1_prime[i+2] - p3_prime[i+2]) / pow(sqrt(pow(p1_prime[i] - p3_prime[i], 2) + pow(p1_prime[i+1] - p3_prime[i+1], 2) + pow(p1_prime[i+2] - p3_prime[i+2], 2)), 3);
       dv_2pr[i] = -9.8 * m_3 * (p2_prime[i] - p3_prime[i]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
-                    -9.8 * m_1 * (p2_prime[i] - p1_prime[i]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
+                  -9.8 * m_1 * (p2_prime[i] - p1_prime[i]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
       dv_2pr[i+1] = -9.8 * m_3 * (p2_prime[i+1] - p3_prime[i+1]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
                     -9.8 * m_1 * (p2_prime[i+1] - p1_prime[i+1]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
       dv_2pr[i+2] = -9.8 * m_3 * (p2_prime[i+2] - p3_prime[i+2]) / pow(sqrt(pow(p2_prime[i] - p3_prime[i], 2) + pow(p2_prime[i+1] - p3_prime[i+1], 2) + pow(p2_prime[i+2] - p3_prime[i+2], 2)), 3) \
                     -9.8 * m_1 * (p2_prime[i+2] - p1_prime[i+2]) / pow(sqrt(pow(p2_prime[i] - p1_prime[i], 2) + pow(p2_prime[i+1] - p1_prime[i+1], 2) + pow(p2_prime[i+2] - p1_prime[i+2], 2)), 3);
       dv_3pr[i] = -9.8 * m_1 * (p3_prime[i] - p1_prime[i]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \
-                    -9.8 * m_2 * (p3_prime[i] - p2_prime[i]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
+                  -9.8 * m_2 * (p3_prime[i] - p2_prime[i]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
       dv_3pr[i+1] = -9.8 * m_1 * (p3_prime[i+1] - p1_prime[i+1]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \
                     -9.8 * m_2 * (p3_prime[i+1] - p2_prime[i+1]) / pow(sqrt(pow(p3_prime[i] - p2_prime[i], 2) + pow(p3_prime[i+1] - p2_prime[i+1], 2) + pow(p3_prime[i+2] - p2_prime[i+2], 2)), 3);
       dv_3pr[i+2] = -9.8 * m_1 * (p3_prime[i+2] - p1_prime[i+2]) / pow(sqrt(pow(p3_prime[i] - p1_prime[i], 2) + pow(p3_prime[i+1] - p1_prime[i+1], 2) + pow(p3_prime[i+2] - p1_prime[i+2], 2)), 3) \

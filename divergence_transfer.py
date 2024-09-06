@@ -2,7 +2,7 @@ import numpy as np
 import ctypes
 import matplotlib.pyplot as plt 
 
-f = ctypes.CDLL('./divergence.so').divergence
+f = ctypes.CDLL('binaries/divergence.so').divergence
 for i in range(788, 900):
 	print (i)
 	x_res = 1000
