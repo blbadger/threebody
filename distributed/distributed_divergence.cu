@@ -691,39 +691,39 @@ int main(void)
 
   cudaFree(d_times); cudaFree(d_still_together); cudaFree(d_not_diverged);
 
-  // free(p1_x); free(p1_y); free(p1_z);
-  // free(p2_x); free(p2_y); free(p2_z);
-  // free(p3_x); free(p3_y); free(p3_z);
+  cudaFreeHost(p1_x); cudaFreeHost(p1_y); cudaFreeHost(p1_z);
+  cudaFreeHost(p2_x); cudaFreeHost(p2_y); cudaFreeHost(p2_z);
+  cudaFreeHost(p3_x); cudaFreeHost(p3_y); cudaFreeHost(p3_z);
 
-  // free(p1_prime_x); free(p1_prime_y); free(p1_prime_z);  
-  // free(p2_prime_x); free(p2_prime_y); free(p2_prime_z);  
-  // free(p3_prime_x); free(p3_prime_y); free(p3_prime_z);  
+  cudaFreeHost(p1_prime_x); cudaFreeHost(p1_prime_y); cudaFreeHost(p1_prime_z);  
+  cudaFreeHost(p2_prime_x); cudaFreeHost(p2_prime_y); cudaFreeHost(p2_prime_z);  
+  cudaFreeHost(p3_prime_x); cudaFreeHost(p3_prime_y); cudaFreeHost(p3_prime_z);  
 
-  // free(dv_1_x); free(dv_1_y); free(dv_1_z);
-  // free(dv_2_x); free(dv_2_y); free(dv_2_z);
-  // free(dv_3_x); free(dv_3_y); free(dv_3_z);
+  cudaFreeHost(dv_1_x); cudaFreeHost(dv_1_y); cudaFreeHost(dv_1_z);
+  cudaFreeHost(dv_2_x); cudaFreeHost(dv_2_y); cudaFreeHost(dv_2_z);
+  cudaFreeHost(dv_3_x); cudaFreeHost(dv_3_y); cudaFreeHost(dv_3_z);
 
-  // free(dv_1pr_x); free(dv_1pr_y); free(dv_1pr_z);
-  // free(dv_2pr_x); free(dv_2pr_y); free(dv_2pr_z);
-  // free(dv_3pr_x); free(dv_3pr_y); free(dv_3pr_z);
+  cudaFreeHost(dv_1pr_x); cudaFreeHost(dv_1pr_y); cudaFreeHost(dv_1pr_z);
+  cudaFreeHost(dv_2pr_x); cudaFreeHost(dv_2pr_y); cudaFreeHost(dv_2pr_z);
+  cudaFreeHost(dv_3pr_x); cudaFreeHost(dv_3pr_y); cudaFreeHost(dv_3pr_z);
 
-  // free(v1_x); free(v1_y); free(v1_z);
-  // free(v2_x); free(v2_y); free(v2_z);
-  // free(v3_x); free(v3_y); free(v3_z);
+  cudaFreeHost(v1_x); cudaFreeHost(v1_y); cudaFreeHost(v1_z);
+  cudaFreeHost(v2_x); cudaFreeHost(v2_y); cudaFreeHost(v2_z);
+  cudaFreeHost(v3_x); cudaFreeHost(v3_y); cudaFreeHost(v3_z);
 
-  // free(v1_prime_x); free(v1_prime_y); free(v1_prime_z);
-  // free(v2_prime_x); free(v2_prime_y); free(v2_prime_z);
-  // free(v3_prime_x); free(v3_prime_y); free(v3_prime_z);
+  cudaFreeHost(v1_prime_x); cudaFreeHost(v1_prime_y); cudaFreeHost(v1_prime_z);
+  cudaFreeHost(v2_prime_x); cudaFreeHost(v2_prime_y); cudaFreeHost(v2_prime_z);
+  cudaFreeHost(v3_prime_x); cudaFreeHost(v3_prime_y); cudaFreeHost(v3_prime_z);
 
-  // free(nv1_x); free(nv1_y); free(nv1_z);
-  // free(nv2_x); free(nv2_y); free(nv2_z);
-  // free(nv3_x); free(nv3_y); free(nv3_z);
+  cudaFreeHost(nv1_x); cudaFreeHost(nv1_y); cudaFreeHost(nv1_z);
+  cudaFreeHost(nv2_x); cudaFreeHost(nv2_y); cudaFreeHost(nv2_z);
+  cudaFreeHost(nv3_x); cudaFreeHost(nv3_y); cudaFreeHost(nv3_z);
 
-  // free(nv1_prime_x); free(nv1_prime_y); free(nv1_prime_z);
-  // free(nv2_prime_x); free(nv2_prime_y); free(nv2_prime_z);
-  // free(nv3_prime_x); free(nv3_prime_y); free(nv3_prime_z);
-  // free(times); free(still_together); free(not_diverged);
+  cudaFreeHost(nv1_prime_x); cudaFreeHost(nv1_prime_y); cudaFreeHost(nv1_prime_z);
+  cudaFreeHost(nv2_prime_x); cudaFreeHost(nv2_prime_y); cudaFreeHost(nv2_prime_z);
+  cudaFreeHost(nv3_prime_x); cudaFreeHost(nv3_prime_y); cudaFreeHost(nv3_prime_z);
 
+  cudaFreeHost(still_together); cudaFreeHost(not_diverged);
   
   // measure elapsed kernal runtime
   end = std::chrono::system_clock::now();
