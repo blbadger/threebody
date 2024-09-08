@@ -18,7 +18,6 @@ for i in range(0, 100):
 	x_res = 300
 	y_res = 300
 	time_steps = int(5000 + (350000 * i / 400))
-	# time_steps = 50000
 	shift_distance = 0.001 / (2**(i/30))
 	x_center = 5.30031
 	y_center = -0.45
