@@ -21,7 +21,7 @@ For further speedups via custom CUDA implementation, `divergence.cu` provides a 
 If you want to re-compile this code for any reason, or compile similar CUDA kernels on your own, use `-Xcompiler`.  For stand-alone CUDA kernels not expecting python bindings, compilation may be performed with only an output file flag specified.
 
 ```bash
-$  nvcc -o divergence divergence.cu
+$ nvcc -o divergence divergence.cu
 ```
 
 For CUDA kernels that are bound to python drivers, compile with `-fPIC` as follows;
