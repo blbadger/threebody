@@ -88,15 +88,15 @@ for i in range(60):
 	plot(output_array, i)
 
 	# clean computed map
-	keys_to_delete = []
-	for pair in already_computed.keys():
-		if pair[0] > start_x + x_range or pair[0] < start_x or pair[1] > start_y + y_range or pair[1] < start_y:
-			keys_to_delete.append(pair)
-		npair = []
-		npair[0] = round(pair[0], decimal)
-		npair[1] = round(already[0], decimal)
+	# keys_to_delete = []
+	# for pair in already_computed.keys():
+	# 	if pair[0] > start_x + x_range or pair[0] < start_x or pair[1] > start_y + y_range or pair[1] < start_y:
+	# 		keys_to_delete.append(pair)
+	# 	npair = []
+	# 	npair[0] = round(pair[0], decimal)
+	# 	npair[1] = round(already[0], decimal)
 
-	print (len(already_computed))
-	for k in keys_to_delete:
-		already_computed.pop(k, None)
-	print (len(already_computed))
+	# print (len(already_computed))
+	# for k in keys_to_delete:
+	# 	already_computed.pop(k, None)
+	# print (len(already_computed))

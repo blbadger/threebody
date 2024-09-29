@@ -3,11 +3,10 @@ import ctypes
 import matplotlib.pyplot as plt 
 
 f = ctypes.CDLL('binaries/divergence.so').divergence
-for i in range(788, 900):
-	print (i)
-	x_res = 1000
-	y_res = 1000
-	time_steps = int(50000 + (350000 * i / 400))
+for i in range(300):
+	x_res = 300
+	y_res = 300
+	time_steps = int(5000 + (350000 * i / 400))
 	# time_steps = 50000
 	shift_distance = 0.001 / (2**(i/30))
 	x_center = 5.30031
@@ -15,9 +14,10 @@ for i in range(788, 900):
 	x_range = 40 / (2**(i/30))
 	y_range = 40 / (2**(i/30))
 
-	f.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double] # CUDA kernal arg types
-	f.restype = ctypes.POINTER(ctypes.c_int * x_res * y_res) # kernal return type
+	f.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double] # CUDA kernel arg types
+	f.restype = ctypes.POINTER(ctypes.c_int * x_res * y_res) # kernel return type
 	arr = f(x_res, y_res, time_steps, x_center, x_range, y_center, y_range, shift_distance).contents
+	print (arr)
 	time_array = np.array(arr)
 	time_array = time_array.reshape(x_res, y_res)
 
