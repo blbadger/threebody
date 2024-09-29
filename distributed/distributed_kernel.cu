@@ -4,7 +4,7 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <cuda_fp16.h>
-#include "distributed.h"
+#include <distributed.h>
 
 // kernal declaration
 __global__
