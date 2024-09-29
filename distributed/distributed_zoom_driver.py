@@ -11,7 +11,7 @@ def plot(output_array, index):
 	plt.close()
 	return
 
-def zoom_video(multithreaded=False)
+def zoom_video(multithreaded=False):
 	if multithreaded:
 		f = ctypes.CDLL('./distributed_multithreaded_zoom.so').divergence
 	else:
