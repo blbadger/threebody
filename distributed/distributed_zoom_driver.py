@@ -13,11 +13,11 @@ def plot(output_array, index):
 
 
 f = ctypes.CDLL('./distributed_zoom.so').divergence
-for i in range(0, 100):
+for i in range(100,1101,10):
 	print (i)
-	x_res = 300
-	y_res = 300
-	time_steps = int(5000 + (350000 * i / 400))
+	x_res = 1000
+	y_res = 1000
+	time_steps = int(50000 + (400000 * i / 400))
 	shift_distance = 0.001 / (2**(i/30))
 	x_center = 5.30031
 	y_center = -0.45

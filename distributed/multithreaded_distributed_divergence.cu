@@ -179,7 +179,7 @@ int main(void)
   // initialize timer
   std::chrono::time_point<std::chrono::system_clock> start, end;
   start = std::chrono::system_clock::now();
-  int N = 9000;
+  int N = 1000000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
