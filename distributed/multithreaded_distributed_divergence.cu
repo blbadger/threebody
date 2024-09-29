@@ -1,25 +1,11 @@
-
-
 #include <stdio.h>
 #include <iostream>
 #include <chrono>
 #include <omp.h>
 #include <thread>
 #include <vector>
-
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-
-__global__
-void saxpy(int n, float a, float *x)
-{
-  int i = blockIdx.x*blockDim.x + threadIdx.x;
-  for (int j=0; j < 100000000; j++){
-    if (i < n) {
-      x[i] += 1;
-    }
-  }
-}
 
 // kernal declaration
 __global__
@@ -400,16 +386,6 @@ int main(void)
     not_diverged[i] = true;
   }
 
-  // float *x, *d_x;
-
-//  int N = 10000000;
-//   cudaHostAlloc((void**)&x, N*sizeof(float), cudaHostAllocWriteCombined | cudaHostAllocMapped);
-
-// //  int n_gpus=4;
-//   for (int i = 0; i < N/n_gpus; i++) {
-//       x[i] = 1.0f;
-//   }
-
   // launch one thread per GPU
   cudaStream_t streams[n_gpus];
   #pragma omp parallel num_threads(n_gpus)
@@ -661,14 +637,6 @@ int main(void)
         );
 
     cudaMemcpyAsync(times+start_idx, d_times[d], block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(still_together+start_idx, d_still_together, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(not_diverged+start_idx, d_not_diverged, block_n*sizeof(bool), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_y+start_idx, d_p1_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_z+start_idx, d_p1_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_x+start_idx, d_p1_prime_x, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_y+start_idx, d_p1_prime_y, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
-    // cudaMemcpyAsync(p1_prime_z+start_idx, d_p1_prime_z, block_n*sizeof(double), cudaMemcpyDeviceToHost, streams[d]);
     cudaDeviceSynchronize();
     cudaFree(d_p1_x[d]); cudaFree(d_p1_y[d]); cudaFree(d_p1_z[d]);
     cudaFree(d_p2_x[d]); cudaFree(d_p2_y[d]); cudaFree(d_p2_z[d]);
